@@ -1,13 +1,14 @@
 {
-  "name": "generator-angular-bootstrap",
-  "version": "0.5.1",
-  "description": "A generator for AngularJS applications",
+  "name": "generator-ng",
+  "version": "0.2.1",
+  "description": "ngFactory generator for AngularJS applications",
   "keywords": [
-    "angular",
-    "yeoman-generator"
+    "yeoman-generator",
+    "ng-factory",
+    "angular"
   ],
-  "homepage": "https://github.com/mgcrea/generator-angular-bootstrap",
-  "bugs": "https://github.com/mgcrea/generator-angular-bootstrap/issues",
+  "homepage": "https://github.com/ng-tools/generator-ng",
+  "bugs": "https://github.com/ng-tools/generator-ng/issues",
   "author": {
     "name": "Olivier Louvignes",
     "email": "olivier@mg-crea.com",
@@ -16,28 +17,27 @@
   "main": "app/index.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mgcrea/generator-angular-bootstrap.git"
+    "url": "https://github.com/ng-tools/generator-ng.git"
   },
   "scripts": {
     "test": "mocha"
   },
   "dependencies": {
-    "bluebird": "^2.3.4",
+    "bluebird": "^2.3.11",
     "chalk": "^0.5.1",
+    "glob": "^4.2.1",
     "needle": "^0.7.10",
-    "nunjucks": "^1.0.7",
-    "semver": "^4.0.0",
-    "yeoman-generator": "^0.17.6"
+    "nunjucks": "^1.1.0",
+    "semver": "^4.1.0",
+    "yeoman-generator": "^0.18.0",
+    "yosay": "^1.0.0"
   },
   "devDependencies": {
     "chalk": "^0.5.1",
-    "mocha": "^1.21.4"
-  },
-  "peerDependencies": {
-    "yo": ">=1.0.0"
+    "mocha": "^2.0.1"
   },
   "engines": {
-    "node": ">=0.8.0",
+    "node": ">=0.10.0",
     "npm": ">=1.2.10"
   },
   "licenses": [

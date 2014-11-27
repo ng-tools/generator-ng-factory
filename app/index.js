@@ -7,6 +7,9 @@ var util = require('util'), utils = require('./modules/utils');
 var path = require('path');
 var Promise = require('bluebird');
 var semver = require('semver');
+var yosay = require('yosay');
+var chalk = require('chalk');
+var globAsync = Promise.promisify(require('glob'));
 var github = require('./modules/github');
 var debug = false;
 
@@ -17,7 +20,7 @@ Generator.prototype.setup = function() {
   var self = this, _ = this._, props = this.props, done = this.async();
 
   // Have Yeoman greet the user.
-  console.log(self.yeoman);
+  console.log(yosay(chalk.yellow.bold('Welcome to ngFactory, ladies and gentlemen!')));
 
   var components = self.components = {
     'angular/angular.js': ['~1.3.0', '~1.2.0'],
@@ -29,30 +32,32 @@ Generator.prototype.setup = function() {
     'angular-ui/ui-router': ['^0.2']
   };
 
-  var promise = debug ?
-    Promise.resolve(JSON.parse('{"ngVersion":"~1.3.0","ngModules":["animate","route"],"components":["twbs/bootstrap","fortawesome/font-awesome","mgcrea/angular-strap","mgcrea/angular-motion","mgcrea/bootstrap-additions"],"buildSystem":"gulp","htmlPreprocessor":"jade","jsPreprocessor":"none","cssPreprocessor":"less","supportLegacy":"no","name":"admin","license":"MIT","user":"mgcrea"}'))
-    .then(function(_props) { _.extend(props, _props); }) :
-  //   Promise.all(Object.keys(components).map(function(component) {
-  //   var minors = {};
-  //   return github.tags(component, components[component]).filter(function(vObj, i) {
-  //     // return i === 0;
-  //     d(vObj);
-  //     var vMinor = [vObj.major, vObj.minor].join('.');
-  //     return !minors[vMinor] && (minors[vMinor] = true);
-  //   }).map(function(vObj) {
-  //     return vObj.toString();
-  //   }).then(function(tags) {
-  //     components[component] = tags;
-  //     return tags;
-  //   });
-  // })).catch(function(err) {
-  //   d(err);
-  //   console.log('/!\\ Tag fetching failed, fallback to last known defaults.');
-  //   components = JSON.parse('{"angular/angular.js":["^1.3.0","^1.2.0"],"twbs/bootstrap":["^3.0"],"fortawesome/font-awesome":["v4.0.3"],"mgcrea/angular-strap":["v2.0.2"],"mgcrea/angular-motion":["v0.3.2"],"mgcrea/bootstrap-additions":["v0.2.2"],"angular-ui/ui-router":["0.2.10"]}');
-  // })
-  Promise.resolve()
-  .then(function askForAngular() {
+  props.git = {
+    name: this.user.git.name(),
+    email: this.user.git.email()
+  };
+
+  // var promise = debug ?
+  var promise = debug ? Promise.resolve(JSON.parse('{"git":{"name":"Olivier Louvignes","email":"olivier@mg-crea.com"},"type":"application","name":"test","ngVersion":"~1.3.0","ngModules":["animate","route"],"components":["twbs/bootstrap"],"htmlPreprocessor":"jade","jsPreprocessor":"none","cssPreprocessor":"less","supportLegacy":"no","license":"MIT","user":"mgcrea"}')).then(function(_props) { _.extend(props, _props); }) :
+  Promise.bind(this)
+  .then(function askForAngularSettings() {
     return self.promptAsync([{
+      name: 'type',
+      message: 'What are you building today?',
+      when: function(props) {
+        // @TODO argv
+        return true;
+      },
+      type: 'list',
+      choices: ['application', 'component'],
+      default: 0
+    }, {
+      name: 'name',
+      message: function(props) {
+        return 'What\'s the name of your ' + props.type + '?';
+      },
+      default: path.basename(process.env.PWD)
+    }, {
       name: 'ngVersion',
       message: 'What version of angular would you like to use?',
       validate: function(value) {
@@ -77,7 +82,7 @@ Generator.prototype.setup = function() {
       default: 0
     }]);
   })
-  .then(function askForComponents() {
+  .then(function askForThirdPartyComponents() {
 
     var choices = Object.keys(components)
     .filter(function(k) { return k !== 'angular/angular.js'; })
@@ -95,13 +100,6 @@ Generator.prototype.setup = function() {
   .then(function askForBuildSettings() {
 
     return self.promptAsync([
-    // {
-    //   name: 'buildSystem',
-    //   message: 'What build system would I use?',
-    //   type: 'list',
-    //   choices: ['gulp', 'grunt'],
-    //   default: 0
-    // },
     {
       name: 'htmlPreprocessor',
       message: 'Should I set up one of those HTML preprocessors for you?',
@@ -129,113 +127,81 @@ Generator.prototype.setup = function() {
       type: 'list',
       choices: ['yes', 'no'],
       default: 1
-    }]);
-
-  })
-  .then(function() {
-
-    return self.promptAsync([{
-      name: 'name',
-      message: 'What\'s the base name of your project?',
-      default: path.basename(process.env.PWD)
     },
     {
       name: 'license',
       message: 'Under which license your project shall be released?',
       default: 'MIT'
-    },
-    {
+    }]);
+
+  })
+  .then(function fetchGithubInfo() {
+
+    if(props.git.email) {
+      return github.email(props.git.email);
+    }
+
+  })
+  .then(function askForExtraInformation(username) {
+
+    return self.promptAsync([{
       name: 'user',
       message: 'Would you mind telling me your username on GitHub?',
-      default: 'mgcrea'
+      default: username
     }]);
 
   });
 
   return promise.then(function() {
-    console.log(JSON.stringify(props));
+
+    // console.log(JSON.stringify(props));
 
     props.dashName = _.dasherize(props.name);
     if(!props.locale) props.locale = 'en';
     props.title = _.classify(props.name);
-    props.moduleName = (props.user ? props.user + '.' : '') + props.title;
+    props.module = (props.user ? props.user + '.' : '') + props.title;
     props.description = 'Yet another amazing AngularJS app';
     props.version = '0.1.0';
 
-    props.appModules = _.clone(props.ngModules)
-    .filter(function(name) {
-      return name !== 'i18n';
-    })
+    // Prepare ngModules
+    props.appModules = _(_.clone(props.ngModules))
+    .reject('i18n')
     .map(_.classify)
     .map(function(name) {
       return 'ng' + name;
     });
+
+    // Prepare components modules
     if(props.components.indexOf('mgcrea/angular-strap') !== -1) {
       props.appModules.push('mgcrea.ngStrap');
     }
 
-    if(!props.user) return;
-    return debug ? Promise.resolve(props.github = JSON.parse('{"login":"mgcrea","id":108273,"avatar_url":"https://avatars.githubusercontent.com/u/108273?v=2","gravatar_id":"","url":"https://api.github.com/users/mgcrea","html_url":"https://github.com/mgcrea","followers_url":"https://api.github.com/users/mgcrea/followers","following_url":"https://api.github.com/users/mgcrea/following{/other_user}","gists_url":"https://api.github.com/users/mgcrea/gists{/gist_id}","starred_url":"https://api.github.com/users/mgcrea/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/mgcrea/subscriptions","organizations_url":"https://api.github.com/users/mgcrea/orgs","repos_url":"https://api.github.com/users/mgcrea/repos","events_url":"https://api.github.com/users/mgcrea/events{/privacy}","received_events_url":"https://api.github.com/users/mgcrea/received_events","type":"User","site_admin":false,"name":"Olivier Louvignes","company":"Freelance","blog":"http://olouv.com","location":"Paris, France","email":"olivier@mg-crea.com","hireable":true,"bio":null,"public_repos":104,"public_gists":13,"followers":339,"following":78,"created_at":"2009-07-24T09:50:40Z","updated_at":"2014-09-26T16:59:20Z"}')) :
-    github.user(props.user).then(function(user) {
-      console.log(JSON.stringify(user));
-      props.github = user;
-    }).catch(function(err) {
-      console.log('/!\\ User fetching failed.');
+  })
+  .then(function setupApplicationFiles() {
+    if(props.type === 'component') return;
+
+    var files = ['js', props.htmlPreprocessor === 'jade' ? 'jade' : 'html', props.cssPreprocessor === 'less' ? 'less' : 'css'];
+
+    // Copy base files
+    return globAsync('app/**/*.{' + files.join(',') + '}', {cwd: path.join(__dirname, 'templates')}).each(function(filepath) {
+      return self.template(filepath, filepath);
     });
 
   })
   .then(function setupProjectFiles() {
 
     // Dotfiles
-    self.copy('gitignore', '.gitignore');
-    self.copy('gitattributes', '.gitattributes');
-    self.copy('editorconfig', '.editorconfig');
-    self.copy('jshintrc', '.jshintrc');
-    self.copy('bowerrc', '.bowerrc');
+    self.copy('.gitignore', '.gitignore');
+    self.copy('.gitattributes', '.gitattributes');
+    self.copy('.editorconfig', '.editorconfig');
+    self.copy('.jshintrc', '.jshintrc');
+    self.copy('.bowerrc', '.bowerrc');
 
     // Package
-    self.template('_gulpfile.js', 'gulpfile.js');
-    self.template('_package.json', 'package.json');
-    self.template('_bower.json', 'bower.json');
-    self.template('_README.md', 'README.md');
-
-
-  })
-  .then(function setupAppFiles() {
-
-    var htmlExt = props.htmlPreprocessor === 'jade' ? 'jade' : 'html';
-
-    self.mkdir('app');
-    self.template('app/_index.' + htmlExt, 'app/index.' + htmlExt);
-
-    // Scripts
-    self.mkdir('app/scripts');
-    self.template('app/scripts/_app.js', 'app/scripts/app.js');
-    self.mkdir('app/scripts/controllers');
-    self.template('app/scripts/controllers/_main.js', 'app/scripts/controllers/main.js');
-    self.mkdir('app/scripts/directives');
-    self.template('app/scripts/directives/_sample.js', 'app/scripts/directives/sample.js');
-    self.mkdir('app/scripts/filters');
-    self.template('app/scripts/filters/_sample.js', 'app/scripts/filters/sample.js');
-    self.mkdir('app/scripts/services');
-    self.template('app/scripts/services/_sample.js', 'app/scripts/services/sample.js');
-
-    // Styles
-    self.mkdir('app/styles');
-    if(props.cssPreprocessor === 'less') {
-      self.template('app/styles/_main.less', 'app/styles/main.less');
-    } else {
-      self.template('app/styles/_main.css', 'app/styles/main.css');
-    }
-
-    // Views
-    self.mkdir('app/views');
-    self.copy('app/views/contact.' + htmlExt, 'app/views/contact.' + htmlExt);
-    self.copy('app/views/features.' + htmlExt, 'app/views/features.' + htmlExt);
-    self.copy('app/views/home.' + htmlExt, 'app/views/home.' + htmlExt);
-    self.mkdir('app/views/partials');
-    self.copy('app/views/partials/header.' + htmlExt, 'app/views/partials/header.' + htmlExt);
-    self.copy('app/views/partials/footer.' + htmlExt, 'app/views/partials/footer.' + htmlExt);
+    self.template('gulpfile.js', 'gulpfile.js');
+    self.template('package.json', 'package.json');
+    self.template('bower.json', 'bower.json');
+    self.template('README.md', 'README.md');
 
   })
   .then(function() {
@@ -243,3 +209,23 @@ Generator.prototype.setup = function() {
   });
 
 };
+
+
+  //   Promise.all(Object.keys(components).map(function(component) {
+  //   var minors = {};
+  //   return github.tags(component, components[component]).filter(function(vObj, i) {
+  //     // return i === 0;
+  //     d(vObj);
+  //     var vMinor = [vObj.major, vObj.minor].join('.');
+  //     return !minors[vMinor] && (minors[vMinor] = true);
+  //   }).map(function(vObj) {
+  //     return vObj.toString();
+  //   }).then(function(tags) {
+  //     components[component] = tags;
+  //     return tags;
+  //   });
+  // })).catch(function(err) {
+  //   d(err);
+  //   console.log('/!\\ Tag fetching failed, fallback to last known defaults.');
+  //   components = JSON.parse('{"angular/angular.js":["^1.3.0","^1.2.0"],"twbs/bootstrap":["^3.0"],"fortawesome/font-awesome":["v4.0.3"],"mgcrea/angular-strap":["v2.0.2"],"mgcrea/angular-motion":["v0.3.2"],"mgcrea/bootstrap-additions":["v0.2.2"],"angular-ui/ui-router":["0.2.10"]}');
+  // })

@@ -15,9 +15,16 @@ exports.tags = function fetchLatestTags(repository, range) {
   });
 };
 
-exports.user = function fetchUser(user) {
-  return needle.getAsync('https://api.github.com/users/' + user + oauth, {compressed: true})
+exports.user = function fetchUserByUsername(username) {
+  return needle.getAsync('https://api.github.com/users/' + username + oauth, {compressed: true})
   .spread(function(response, body) {
     return body;
+  });
+};
+
+exports.email = function fetchUsernameWithEmail(email) {
+  return needle.getAsync('https://api.github.com/search/users' + oauth + '&q=' + email + '%20in:email', {compressed: true})
+  .spread(function(response, body) {
+    return body.items[0].login;
   });
 };

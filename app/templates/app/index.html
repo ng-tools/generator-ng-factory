@@ -1,12 +1,5 @@
 <!doctype html>
-{%- if props.supportLegacy == 'yes' %}
-<!--[if lt IE 9]> <html class="no-js lt-ie9" lang=" props.locale }}" ng-app="{{ props.user ? props.user + '.' : '' }}{{ props.title }}"> <![endif]-->
-<!--[if gt IE 8]>
-{% endif -%}
-<html class="no-js" lang="{{ props.locale }}" ng-app="{% if props.user %}{{ props.user + '.' }}{% endif %}{{ props.title }}">
-{%- if props.supportLegacy == 'yes' %}
-<![endif]-->
-{% endif -%}
+<html class="no-js" lang="{{ props.locale }}" ng-app="{{ props.module }}">
 <head>
 
   <meta charset="utf-8">
@@ -38,18 +31,15 @@
   <link rel="shortcut icon" href="http://angularjs.org/favicon.ico" type="image/x-icon">
 {%- if props.github %}
   <!-- Author of this application -->
-  <link rel="author" href="{{ props.github.html_url }}"> <% } }}
+  <link rel="author" href="https://github.com/{{ props.username }}"> <% } }}
 {%- endif %}
 
 
-  <!-- build:css styles/components.min.css -->
   <!-- bower:css -->
-  <!-- endbower -->
-  <!-- endbuild -->
+  <!-- endinject -->
 
-  <!-- build:css(.tmp) styles/main.min.css -->
-  <link rel="stylesheet" href="styles/main.css">
-  <!-- endbuild -->
+  <!-- inject:css -->
+  <!-- endinject -->
 
 </head>
 
@@ -75,16 +65,12 @@
     </div>
   </div>
 
-  <!-- build:js scripts/components.min.js -->
   <!-- bower:js -->
-  <!-- endbower -->
+  <!-- endinject -->
   <% if(props.locale !== 'en') { }}<script src="bower_components/angular-i18n/angular-locale_{{ props.locale }}.js"></script><% } }}
-  <!-- endbuild -->
 
-  <!-- build:js scripts/app.min.js -->
-  <script src="scripts/app.js"></script>
-  <script src="scripts/controllers/main.js"></script>
-  <!-- endbuild -->
+  <!-- inject:js -->
+  <!-- endinject -->
 
 </body>
 
