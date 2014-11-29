@@ -1,5 +1,5 @@
 doctype html
-html(lang="{{ props.locale }}", ng-app="{{ props.module }}")
+html(lang="x{{ props.locale }}", ng-app="{{ props.module }}")
   head
   meta(charset="utf-8")
   meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
@@ -33,7 +33,7 @@ html(lang="{{ props.locale }}", ng-app="{{ props.module }}")
   //- inject:css
   //- endinject
 
-  body(ng-controller="MainCtrl")
+  body(ng-controller="MainCtrl as main")
     .site-wrapper
       .site-wrapper-inner
         .masthead.clearfix

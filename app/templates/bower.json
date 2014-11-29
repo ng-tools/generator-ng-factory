@@ -5,17 +5,17 @@
   "keywords": [
     "angular"
   ],
-{%- if props.github %}
-  "homepage": "{{ props.github.html_url }}/{{ props.dashName }}",
-  "bugs": "{{ props.github.html_url }}/{{ props.dashName }}/issues",
+{%- if props.username %}
+  "homepage": "https://github.com/{{ props.username }}/{{ props.dashName }}",
+  "bugs": "https://github.com/{{ props.username }}/{{ props.dashName }}/issues",
   "author": {
     "name": "{{ props.github.name }}",
     "email": "{{ props.github.email }}",
-    "url": "{{ props.github.html_url }}"
+    "url": "https://github.com/{{ props.username }}"
   },
   "repository": {
     "type": "git",
-    "url": "{{ props.github.html_url }}/{{ props.dashName }}.git"
+    "url": "https://github.com/{{ props.username }}/{{ props.dashName }}.git"
   },
 {%- endif %}
 {%- if props.license %}

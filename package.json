@@ -24,8 +24,12 @@
   },
   "dependencies": {
     "bluebird": "^2.3.11",
+    "buffer-equal": "0.0.1",
     "chalk": "^0.5.1",
+    "char-spinner": "^1.0.1",
     "glob": "^4.2.1",
+    "inquirer": "^0.8.0",
+    "minimist": "^1.1.0",
     "needle": "^0.7.10",
     "nunjucks": "^1.1.0",
     "semver": "^4.1.0",

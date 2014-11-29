@@ -1,0 +1,88 @@
+'use strict';
+
+var path = require('path');
+var semver = require('semver');
+
+module.exports = function() {
+  var self = this;
+  var props = this.props, argv = this.argv;
+
+  var components = self.components = {
+    'angular/angular.js': ['~1.3.0', '~1.2.0'],
+    'twbs/bootstrap': ['^3.0'],
+    'fortawesome/font-awesome': ['^4.0'],
+    'mgcrea/angular-strap': ['^2.0'],
+    'mgcrea/angular-motion': ['^0.3'],
+    'mgcrea/bootstrap-additions': ['^0.2'],
+    'angular-ui/ui-router': ['^0.2']
+  };
+
+  // Handle command-line args
+  var basename = path.basename(process.env.PWD);
+  if(argv.y || argv.yes) {
+    props.ngVersion = '~1.3.0';
+    props.ngModules = ['animate', 'route'];
+    props.components = ['twbs/bootstrap'];
+    props.supportLegacy = 'no';
+  }
+
+  return self.promptAsync([{
+    name: 'ngVersion',
+    when: self.whenUndefinedProp('ngVersion'),
+    message: 'What version of angular would you like to use?',
+    validate: function(value) {
+      return semver.validRange(value) ? true : 'Please enter a valid semantic version (semver.org)';
+    },
+    type: 'list',
+    choices: components['angular/angular.js'],
+    default: 0
+  }, {
+    name: 'ngModules',
+    when: self.whenUndefinedProp('ngModules'),
+    message: 'Which official angular modules would you need?',
+    type: 'checkbox',
+    choices: [{name: 'animate', checked: true}, 'cookies', 'i18n', 'resource', {name: 'route', checked: true}, 'sanitize', 'touch']
+  }, {
+    name: 'locale',
+    message: 'Should I preload a specific i18n-locale file?',
+    type: 'list',
+    choices: ['en', 'de', 'es', 'fr'],
+    when: function(props) {
+      return props.ngModules && props.ngModules.indexOf('i18n') !== -1;
+    },
+    default: 0
+  }])
+  .then(function askForThirdPartyComponents() {
+
+    var choices = Object.keys(components)
+    .filter(function(k) { return k !== 'angular/angular.js'; })
+    .map(function(k) { return {name: k + ' (' + components[k] + ')', value: k}; });
+    choices[0].checked = true;
+
+    return self.promptAsync([{
+      name: 'components',
+      when: self.whenUndefinedProp('components'),
+      message: 'Any third-party component you might require?',
+      type: 'checkbox',
+      choices: choices
+    }]);
+
+  })
+  .then(function askForCompatibility() {
+
+    return self.promptAsync([{
+      name: 'supportLegacy',
+      message: 'Would you want me to support old versions of Internet Explorer (eg. before IE9)?',
+      type: 'list',
+      choices: ['yes', 'no'],
+      when: function() {
+        return !props.supportLegacy;
+      },
+      default: 1
+    }]);
+
+  });
+
+};
+
+
