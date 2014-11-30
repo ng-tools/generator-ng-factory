@@ -21,7 +21,7 @@ module.exports = function() {
       .map(_.classify)
       .map(function(name) {
         return 'ng' + name;
-      });
+      }).value();
 
     return '\'' + modules.join('\', \'') + '\'';
   });

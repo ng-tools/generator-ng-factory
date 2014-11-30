@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('{{ props.moduleName }}', [{{ props.appModules | ngModules }}])
+angular.module('{{ props.moduleName }}', [{{ props.ngModules | ngModules }}])
 
   .constant('version', 'v{{ props.version }}')
 {%- if props.ngModules|contains('route') %}

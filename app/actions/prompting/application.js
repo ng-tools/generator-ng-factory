@@ -7,7 +7,7 @@ module.exports = function() {
   var self = this;
   var props = this.props, argv = this.argv;
 
-  var components = self.components = {
+  var components = props.availableComponents = {
     'angular/angular.js': ['~1.3.0', '~1.2.0'],
     'twbs/bootstrap': ['^3.0'],
     'fortawesome/font-awesome': ['^4.0'],
@@ -20,7 +20,7 @@ module.exports = function() {
   // Handle command-line args
   var basename = path.basename(process.env.PWD);
   if(argv.y || argv.yes) {
-    props.ngVersion = '~1.3.0';
+    props.ngVersion = components['angular/angular.js'][0];
     props.ngModules = ['animate', 'route'];
     props.components = ['twbs/bootstrap'];
     props.supportLegacy = 'no';
@@ -80,6 +80,10 @@ module.exports = function() {
       },
       default: 1
     }]);
+
+  }).then(function() {
+
+    props.description = 'Yet another amazing AngularJS app!';
 
   });
 

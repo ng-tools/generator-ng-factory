@@ -65,6 +65,7 @@ var writeDestFileAsyncForce = false;
 function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
   /* jshint validthis:true */
   var self = this;
+  var argv = this.argv;
 
   if(!destBuffer) {
 
@@ -92,7 +93,7 @@ function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
       type: 'expand',
       message: 'Overwrite ' + dest + '?',
       when: function() {
-        return !writeDestFileAsyncForce;
+        return !writeDestFileAsyncForce && !argv.yes && !argv.y;
       },
       choices: [{
         key: 'y',
@@ -125,7 +126,7 @@ function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
           if(props.action === 'force') {
             writeDestFileAsyncForce = true;
           }
-          if(writeDestFileAsyncForce || props.action === 'force' || props.action === 'write') {
+          if(argv.y || argv.yes || writeDestFileAsyncForce || props.action === 'force' || props.action === 'write') {
             return resolve(fs.writeFileAsync(dest, sourceBuffer).then(function() {
               self.log(chalk.yellow('force') + ' ' + dest);
             }).return(props.action));
@@ -168,7 +169,7 @@ Generator.prototype.templateAsync = function(source, dest) {
 
   return readFilePairAsync(source, dest)
   .spread(function(sourceBuffer, destBuffer) {
-    var template = self.engine(sourceBuffer.toString(), {props: self.props});
+    var template = self.engine(sourceBuffer.toString(), {props: self.props, pkg: self.pkg});
     return [new Buffer(template), destBuffer];
   })
   .spread(function(sourceBuffer, destBuffer) {

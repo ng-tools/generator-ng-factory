@@ -1,10 +1,10 @@
 doctype html
-html(lang="x{{ props.locale }}", ng-app="{{ props.module }}")
+html(lang="{{ props.locale }}", ng-app="{{ props.moduleName }}")
   head
   meta(charset="utf-8")
   meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
-  title {{ props.title }} - {{ props.description }}
-  meta(name="description", content="<%= props.description %>")
+  title {{ props.className }} - {{ props.description }}
+  meta(name="description", content="{{ props.description }}")
 {%- if props.supportLegacy == 'yes' %}
 
   <!--[if lt IE 9]>

@@ -1,21 +1,21 @@
 {
-  "name": "{{ props.name }}",
+  "name": "{{ props.pkgName }}",
   "version": "{{ props.version }}",
   "description": "{{ props.description }}",
   "keywords": [
     "angular"
   ],
 {%- if props.username %}
-  "homepage": "https://github.com/{{ props.username }}/{{ props.dashName }}",
-  "bugs": "https://github.com/{{ props.username }}/{{ props.dashName }}/issues",
+  "homepage": "https://github.com/{{ props.username }}/{{ props.pkgName }}",
+  "bugs": "https://github.com/{{ props.username }}/{{ props.pkgName }}/issues",
   "author": {
-    "name": "{{ props.github.name }}",
-    "email": "{{ props.github.email }}",
+    "name": "{{ props.git.name }}",
+    "email": "{{ props.git.email }}",
     "url": "https://github.com/{{ props.username }}"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/{{ props.username }}/{{ props.dashName }}.git"
+    "url": "https://github.com/{{ props.username }}/{{ props.pkgName }}.git"
   },
 {%- endif %}
 {%- if props.license %}
@@ -27,7 +27,7 @@
 {%- endif %}
   "dependencies": {
     {%- for component in props.components %}
-    "{{ component|split("/")|last }}": "{{ components[component] }}",
+    "{{ component|split("/")|last }}": "{{ props.availableComponents[component][0] }}",
     {%- endfor %}
     {%- for module in props.ngModules %}
     "angular-{{ module }}": "{{ props.ngVersion }}",

@@ -13,7 +13,7 @@ module.exports = function () {
   .then(function() {
 
     var dotfiles = ['.gitignore', '.gitattributes', '.editorconfig', '.jshintrc', '.bowerrc'];
-    var pkgfiles = ['gulpfile.js', 'package.json', 'bower.json', 'README.md'];
+    var pkgfiles = ['gulpfile.js', 'ngfactory.json', 'package.json', 'bower.json', 'README.md'];
 
     return Promise.props({
       dotfiles: Promise.all(dotfiles.map(function(file) {

@@ -3,6 +3,7 @@
 var path = require('path');
 var yosay = require('yosay');
 var chalk = require('chalk');
+var _ = require('lodash');
 
 module.exports = function () {
   var self = this, done = this.async();
@@ -106,6 +107,17 @@ module.exports = function () {
       message: 'Would you mind telling me your username on GitHub?',
       default: username
     }]);
+
+  })
+  .then(function prepareViewProps() {
+
+    props.version = '0.1.0';
+    props.pkgName = _.dasherize(props.name);
+    props.className = _.classify(props.name);
+    props.moduleName = (props.username ? props.username + '.' : '') + props.className;
+    if(!props.locale) {
+      props.locale = 'en';
+    }
 
   })
   .then(function() {
