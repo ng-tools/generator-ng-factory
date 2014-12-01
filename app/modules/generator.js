@@ -4,9 +4,11 @@ var path = require('path');
 var util = require('util');
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
+var mkdirpAsync = Promise.promisify(require('mkdirp'));
 var chalk = require('chalk');
 var _ = require('lodash');
 var inquirer = require('inquirer');
+var log = require('./../utils/log');
 
 var yeoman = require('yeoman-generator');
 var Generator = yeoman.generators.Base;
@@ -44,13 +46,16 @@ Generator.prototype.whenUndefinedProp = function(prop) {
 var bufferEqual = require('buffer-equal');
 
 function readSourceFileAsync(source) {
-  return fs.readFileAsync(path.join(__dirname, '..', 'templates', source));
+  return fs.readFileAsync(path.join(__dirname, '..', 'templates', source))
+  .catch(function(err) {
+    return null;
+  });
 }
 
 function readDestFileAsync(source) {
   return fs.readFileAsync(path.join(process.env.PWD, source))
   .catch(function(err) {
-    return;
+    return null;
   });
 }
 
@@ -69,7 +74,10 @@ function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
 
   if(!destBuffer) {
 
-    return fs.writeFileAsync(dest, sourceBuffer)
+    return mkdirpAsync(path.dirname(dest))
+    .then(function() {
+      return fs.writeFileAsync(dest, sourceBuffer);
+    })
     .then(function() {
       return self.queueAsync(function() {
         self.log(chalk.green('create') + ' ' + dest);
@@ -155,6 +163,7 @@ function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
 Generator.prototype.copyAsync = function(source, dest) {
   var self = this;
 
+  // log.debug('Processing file "%s"', source);
   return readFilePairAsync(source, dest)
   .spread(function(sourceBuffer, destBuffer) {
     return writeDestFileAsync.call(self, dest, sourceBuffer, destBuffer, source);
@@ -167,6 +176,7 @@ Generator.prototype.copyAsync = function(source, dest) {
 Generator.prototype.templateAsync = function(source, dest) {
   var self = this;
 
+  // log.debug('Processing template "%s"', source);
   return readFilePairAsync(source, dest)
   .spread(function(sourceBuffer, destBuffer) {
     var template = self.engine(sourceBuffer.toString(), {props: self.props, pkg: self.pkg});
@@ -174,8 +184,9 @@ Generator.prototype.templateAsync = function(source, dest) {
   })
   .spread(function(sourceBuffer, destBuffer) {
     return writeDestFileAsync.call(self, dest, sourceBuffer, destBuffer, source);
-  })
-  .then(function(status) {
+  }).catch(function(err) {
+    log.error(err);
+    throw err;
   });
 
 };
