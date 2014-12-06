@@ -1,4 +1,4 @@
-<h3 class="masthead-brand">Cover{{$path()}}</h3>
+<h3 class="masthead-brand">{% raw %}Cover~{{ main.version }}{{ main.path() }}{% endraw %}</h3>
 <ul class="nav masthead-nav" bs-nav>
   <li ng-class="{active: $path() == '/'}"><a href="#/">Home</a></li>
   <li ng-class="{active: $path() == '/features'}"><a href="#/features">Features</a></li>

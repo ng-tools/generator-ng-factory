@@ -2,9 +2,10 @@
 
 angular.module('{{ props.moduleName }}')
 
-  .controller('MainCtrl', function($scope, $location, version) {
+  .controller('MainCtrl', function($location, version) {
 
-    $scope.$path = $location.path.bind($location);
-    $scope.version = version;
+    var vm = this;
+    vm.path = $location.path.bind($location);
+    vm.version = version;
 
   });
