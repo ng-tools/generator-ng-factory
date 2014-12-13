@@ -2,6 +2,7 @@
 
 var path = require('path');
 var semver = require('semver');
+var _ = require('lodash');
 
 module.exports = function() {
   var self = this;
@@ -20,10 +21,12 @@ module.exports = function() {
   // Handle command-line args
   var basename = path.basename(process.env.PWD);
   if(argv.y || argv.yes) {
-    props.ngVersion = components['angular/angular.js'][0];
-    props.ngModules = ['animate', 'route'];
-    props.components = ['twbs/bootstrap'];
-    props.supportLegacy = 'no';
+    _.defaults(props, {
+      ngVersion: components['angular/angular.js'][0],
+      ngModules: ['animate', 'route'],
+      components: ['twbs/bootstrap'],
+      supportLegacy: 'no'
+    });
   }
 
   return self.promptAsync([{

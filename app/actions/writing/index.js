@@ -4,16 +4,32 @@ var path = require('path');
 var yosay = require('yosay');
 var chalk = require('chalk');
 var Promise = require('bluebird');
+var _ = require('lodash');
+var fs = Promise.promisifyAll(require('fs'));
 
 module.exports = function () {
   var self = this, done = this.async();
   var props = this.props, argv = this.argv;
 
-  return require('./' + props.type).call(self)
+  return Promise.resolve()
+  .then(function() {
+    var config = _.pick(props, 'type', 'name', 'namespace', 'username', /*'version', 'description', */ 'ngVersion', 'license', 'htmlPreprocessor', 'jsPreprocessor', 'cssPreprocessor');
+    return self.writeAsync('ngfactory.json', JSON.stringify(config, null, 2));
+  })
   .then(function() {
 
-    var dotfiles = ['.gitignore', '.gitattributes', '.editorconfig', '.jshintrc', '.bowerrc'];
-    var pkgfiles = ['gulpfile.js', 'ngfactory.json', 'package.json', 'bower.json', 'README.md'];
+    var files = [
+      props.jsPreprocessor !== 'none' ? props.jsPreprocessor : 'js',
+      props.htmlPreprocessor !== 'none' ? props.htmlPreprocessor : 'html',
+      props.cssPreprocessor !== 'none' ? props.cssPreprocessor.replace('sass', 'scss') : 'css'
+    ];
+
+    return require('./' + props.type).call(self, files);
+  })
+  .then(function() {
+
+    var dotfiles = ['.gitignore', '.gitattributes', '.editorconfig', '.jshintrc'];
+    var pkgfiles = ['gulpfile.js', 'package.json', 'bower.json', 'README.md', '.bowerrc'];
 
     return Promise.props({
       dotfiles: Promise.all(dotfiles.map(function(file) {

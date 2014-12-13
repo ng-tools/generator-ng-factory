@@ -1,5 +1,0 @@
-{
-  "name": "{{ props.pkgName }}",
-  "type": "{{ props.type }}",
-  "module": "{{ props.moduleName }}"
-}

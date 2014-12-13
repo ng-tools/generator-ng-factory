@@ -45,10 +45,11 @@ Generator.prototype.whenUndefinedProp = function(prop) {
 
 var bufferEqual = require('buffer-equal');
 
-function readSourceFileAsync(source) {
-  return fs.readFileAsync(path.join(__dirname, '..', 'templates', source))
+function readSourceFileAsync(source, options) {
+  if(!options) options = {};
+  return fs.readFileAsync(path.join(options.cwd || (path.join(__dirname, '..', 'templates')), source))
   .catch(function(err) {
-    return null;
+    throw err;
   });
 }
 
@@ -59,9 +60,9 @@ function readDestFileAsync(source) {
   });
 }
 
-function readFilePairAsync(source, dest) {
+function readFilePairAsync(source, dest, options) {
   return Promise.all([
-    readSourceFileAsync(source),
+    readSourceFileAsync(source, options),
     readDestFileAsync(dest)
   ]);
 }
@@ -71,6 +72,10 @@ function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
   /* jshint validthis:true */
   var self = this;
   var argv = this.argv;
+
+  if(!Buffer.isBuffer(sourceBuffer)) {
+    sourceBuffer = new Buffer(sourceBuffer);
+  }
 
   if(!destBuffer) {
 
@@ -159,25 +164,33 @@ function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
 //   identical: 'cyan',
 //   info: 'gray'
 // };
-
-Generator.prototype.copyAsync = function(source, dest) {
+Generator.prototype.writeAsync = function(dest, buffer) {
   var self = this;
 
-  // log.debug('Processing file "%s"', source);
-  return readFilePairAsync(source, dest)
-  .spread(function(sourceBuffer, destBuffer) {
-    return writeDestFileAsync.call(self, dest, sourceBuffer, destBuffer, source);
-  })
-  .then(function(status) {
+  return readDestFileAsync(dest)
+  .then(function(destBuffer) {
+    return writeDestFileAsync.call(self, dest, buffer, destBuffer);
   });
 
 };
 
-Generator.prototype.templateAsync = function(source, dest) {
+Generator.prototype.copyAsync = function(source, dest, options) {
+  var self = this;
+
+  // log.debug('Processing file "%s"', source);
+  return readFilePairAsync(source, dest, options)
+  .spread(function(sourceBuffer, destBuffer) {
+    return writeDestFileAsync.call(self, dest, sourceBuffer, destBuffer, source);
+  });
+
+};
+
+Generator.prototype.templateAsync = function(source, dest, options) {
   var self = this;
 
   // log.debug('Processing template "%s"', source);
-  return readFilePairAsync(source, dest)
+
+  return readFilePairAsync(source, dest, options)
   .spread(function(sourceBuffer, destBuffer) {
     var template = self.engine(sourceBuffer.toString(), {props: self.props, pkg: self.pkg});
     return [new Buffer(template), destBuffer];

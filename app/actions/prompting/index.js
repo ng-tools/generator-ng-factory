@@ -4,6 +4,8 @@ var path = require('path');
 var yosay = require('yosay');
 var chalk = require('chalk');
 var _ = require('lodash');
+var Promise = require('bluebird');
+var fs = Promise.promisifyAll(require('fs'));
 
 module.exports = function () {
   var self = this, done = this.async();
@@ -13,43 +15,58 @@ module.exports = function () {
 
   // Have Yeoman greet the user
   self.log(yosay(chalk.yellow.bold('Welcome to ngFactory, ladies and gentlemen!')));
+  clearInterval(this.spinner);
 
-  props.git = {
-    name: this.user.git.name(),
-    email: this.user.git.email()
-  };
+  return fs.readFileAsync(path.resolve(process.env.PWD, 'ngfactory.json'))
+  .then(function(buffer) {
+    self.log(chalk.cyan('info') + ' Loading ngfactory.json from cwd');
+    var localConfig = JSON.parse(buffer.toString());
+    _.extend(props, localConfig);
+  })
+  .catch(function(err) {})
+  .then(function() {
 
-  // Handle command-line args
-  var basename = path.basename(process.env.PWD);
-  if(argv.app || argv.application) {
-    props.type = 'application';
-  }
-  if(argv.cmp || argv.component) {
-    props.type = 'component';
-  }
-  if(argv.y || argv.yes) {
-    props.name = basename;
-    props.htmlPreprocessor = 'jade';
-    props.jsPreprocessor = 'none';
-    props.cssPreprocessor = 'less';
-    props.license = 'MIT';
-  }
+    // Fetch git config settings
+    props.git = {
+      name: self.user.git.name(),
+      email: self.user.git.email()
+    };
 
-  return self.promptAsync([{
-    name: 'type',
-    when: self.whenUndefinedProp('type'),
-    message: 'What are you building today?',
-    type: 'list',
-    choices: ['application', 'component'],
-    default: 0
-  }, {
-    name: 'name',
-    when: self.whenUndefinedProp('name'),
-    message: function() {
-      return 'What\'s the package name of your ' + props.type + '?';
-    },
-    default: basename
-  }])
+    // Handle command-line args
+    var basename = path.basename(process.env.PWD);
+    if(argv.app || argv.application) {
+      props.type = 'application';
+    }
+    if(argv.cmp || argv.component) {
+      props.type = 'component';
+    }
+    if(argv.y || argv.yes) {
+      _.defaults(props, {
+        name: basename,
+        htmlPreprocessor: 'jade',
+        jsPreprocessor: 'none',
+        cssPreprocessor: 'less',
+        license: 'MIT'
+      });
+    }
+
+    return self.promptAsync([{
+      name: 'type',
+      when: self.whenUndefinedProp('type'),
+      message: 'What are you building today?',
+      type: 'list',
+      choices: ['application', 'component'],
+      default: 0
+    }, {
+      name: 'name',
+      when: self.whenUndefinedProp('name'),
+      message: function() {
+        return 'What\'s the package name of your ' + props.type + '?';
+      },
+      default: basename
+    }]);
+
+  })
   .then(function() {
 
     return require('./' + props.type).call(self);
@@ -109,12 +126,26 @@ module.exports = function () {
     }]);
 
   })
+  .then(function() {
+
+    return self.promptAsync([{
+      name: 'namespace',
+      when: self.whenUndefinedProp('namespace'),
+      message: 'What namespace should we use (2-3 letters)?',
+      validate: function(value) {
+        return /^\w+$/.test(value) ? true : 'Please enter only letters';
+      },
+      default: props.type === 'application' ? 'app' : (props.username ? props.username.toLowerCase().substr(0, 2) : 'my')
+    }]);
+
+  })
   .then(function prepareViewProps() {
 
     props.version = '0.1.0';
     props.pkgName = _.dasherize(props.name);
     props.className = _.classify(props.name);
     props.moduleName = (props.username ? props.username + '.' : '') + props.className;
+    props.namespace = props.namespace.toLowerCase();
     if(!props.locale) {
       props.locale = 'en';
     }
