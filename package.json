@@ -1,5 +1,5 @@
 {
-  "name": "generator-ng",
+  "name": "generator-ng-factory",
   "version": "0.2.2",
   "description": "ngFactory generator for AngularJS applications",
   "keywords": [
@@ -7,8 +7,8 @@
     "ng-factory",
     "angular"
   ],
-  "homepage": "https://github.com/ng-tools/generator-ng",
-  "bugs": "https://github.com/ng-tools/generator-ng/issues",
+  "homepage": "https://github.com/ng-tools/generator-ng-factory",
+  "bugs": "https://github.com/ng-tools/generator-ng-factory/issues",
   "author": {
     "name": "Olivier Louvignes",
     "email": "olivier@mg-crea.com",
@@ -17,7 +17,7 @@
   "main": "app/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ng-tools/generator-ng.git"
+    "url": "https://github.com/ng-tools/generator-ng-factory.git"
   },
   "scripts": {
     "test": "mocha"
