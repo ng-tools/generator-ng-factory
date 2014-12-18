@@ -19,6 +19,7 @@ module.exports = function () {
   .then(function() {
 
     var files = [
+      'json',
       props.jsPreprocessor !== 'none' ? props.jsPreprocessor : 'js',
       props.htmlPreprocessor !== 'none' ? props.htmlPreprocessor : 'html',
       props.cssPreprocessor !== 'none' ? props.cssPreprocessor.replace('sass', 'scss') : 'css'

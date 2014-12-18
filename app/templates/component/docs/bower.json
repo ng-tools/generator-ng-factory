@@ -1,0 +1,35 @@
+{
+  "name": "{{ props.pkgName }}.docs",
+  "version": "{{ props.version }}",
+  "description": "{{ props.description }}",
+  "keywords": [
+    "angular"
+  ],
+{%- if props.username %}
+  "author": {
+    "name": "{{ props.git.name }}",
+    "email": "{{ props.git.email }}",
+    "url": "https://github.com/{{ props.username }}"
+  },
+{%- endif %}
+{%- if props.license %}
+   "licenses": [
+    {
+      "type": "{{ props.license }}"
+    }
+  ],
+{%- endif %}
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.3",
+    "bootstrap": "^3.3",
+    "highlightjs": "^8.3"
+  },
+  "devDependencies": {}
+}
