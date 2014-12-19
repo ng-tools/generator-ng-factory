@@ -1,5 +1,6 @@
 'use strict';
 
+require('./utils/string');
 var debug = require('./utils/debug');
 var Base = require('./modules/generator');
 var spinner = require('char-spinner');

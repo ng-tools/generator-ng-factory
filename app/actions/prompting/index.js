@@ -142,7 +142,7 @@ module.exports = function () {
   .then(function prepareViewProps() {
 
     props.version = '0.1.0';
-    props.pkgName = _.dasherize(props.name);
+    props.pkgName = _.dasherize(props.name).replace(/^-/, '');
     props.className = _.classify(props.name);
     props.moduleName = (props.username ? props.username + '.' : '') + props.className;
     props.namespace = props.namespace.toLowerCase();

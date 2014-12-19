@@ -35,6 +35,7 @@
     "needle": "^0.7.10",
     "nunjucks": "^1.1.0",
     "semver": "^4.1.0",
+    "underscore.string": "^2.4.0",
     "yeoman-generator": "^0.18.4",
     "yosay": "^1.0.0"
   },
