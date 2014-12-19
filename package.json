@@ -1,6 +1,6 @@
 {
   "name": "generator-ng-factory",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "ngFactory generator for AngularJS applications",
   "keywords": [
     "yeoman-generator",

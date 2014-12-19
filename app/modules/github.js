@@ -25,6 +25,6 @@ exports.user = function fetchUserByUsername(username) {
 exports.email = function fetchUsernameWithEmail(email) {
   return needle.getAsync('https://api.github.com/search/users' + oauth + '&q=' + email + '%20in:email', {compressed: true})
   .spread(function(response, body) {
-    return body.items[0].login;
+    return body.items && body.items[0] ? body.items[0].login : '';
   });
 };
