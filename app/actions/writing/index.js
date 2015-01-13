@@ -31,12 +31,12 @@ module.exports = function () {
   })
   .then(function() {
 
-    var dotfiles = ['.gitignore', '.gitattributes', '.editorconfig', '.jshintrc'];
-    var pkgfiles = ['gulpfile.js', 'package.json', 'bower.json', 'README.md', '.bowerrc'];
+    var dotfiles = ['.gitignore', '.gitattributes', '.editorconfig', '.jshintrc', '.bowerrc'];
+    var pkgfiles = ['gulpfile.js', 'package.json', 'bower.json', 'README.md'];
 
     return Promise.props({
       dotfiles: Promise.all(dotfiles.map(function(file) {
-        return self.copyAsync(file, file);
+        return self.templateAsync(path.join('dotfiles', file.substr(1)), file);
       })),
       pkgfiles: Promise.all(pkgfiles.map(function(file) {
         return self.templateAsync(file, file);
