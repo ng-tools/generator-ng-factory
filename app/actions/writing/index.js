@@ -22,7 +22,7 @@ module.exports = function () {
 
     var files = [
       'json',
-      props.jsPreprocessor !== 'none' ? props.jsPreprocessor : 'js',
+      ['none', '6to5'].indexOf(props.jsPreprocessor) === -1 ? props.jsPreprocessor : 'js',
       props.htmlPreprocessor !== 'none' ? props.htmlPreprocessor : 'html',
       props.cssPreprocessor !== 'none' ? props.cssPreprocessor.replace('sass', 'scss') : 'css'
     ];
