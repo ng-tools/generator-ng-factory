@@ -57,53 +57,14 @@ module.exports = function () {
       type: 'list',
       choices: ['application', 'component'],
       default: 0
-    }, {
-      name: 'name',
-      when: self.whenUndefinedProp('name'),
-      message: function() {
-        return 'What\'s the package name of your ' + props.type + '?';
-      },
-      default: basename
-    }]);
-
-  })
-  .then(function() {
-
-    return require('./' + props.type).call(self);
-
-  })
-  .then(function askForBuildSettings() {
-
-    return self.promptAsync([{
-      name: 'htmlPreprocessor',
-      when: self.whenUndefinedProp('htmlPreprocessor'),
-      message: 'Should I set up one of those HTML preprocessors for you?',
-      type: 'list',
-      choices: ['none', 'jade'],
-      default: 0
-    },
-    {
-      name: 'jsPreprocessor',
-      when: self.whenUndefinedProp('jsPreprocessor'),
-      message: 'Should I set up one of those JS preprocessors for you?',
-      type: 'list',
-      choices: ['none', 'coffee'],
-      default: 0
-    },
-    {
-      name: 'cssPreprocessor',
-      when: self.whenUndefinedProp('cssPreprocessor'),
-      message: 'Should I set up one of those CSS preprocessors for you?',
-      type: 'list',
-      choices: ['none', 'less', 'sass'],
-      default: 1
-    },
-    {
-      name: 'license',
-      when: self.whenUndefinedProp('license'),
-      message: 'Under which license your project shall be released?',
-      default: 'MIT'
-    }]);
+    }]).then(function() {
+      return self.promptAsync([{
+        name: 'name',
+        when: self.whenUndefinedProp('name'),
+        message: 'What\'s the package name of your ' + props.type + '?',
+        default: basename
+      }]);
+    });
 
   })
   .then(function fetchGithubInfo() {
@@ -128,14 +89,40 @@ module.exports = function () {
   })
   .then(function() {
 
+    return require('./' + props.type).call(self);
+
+  })
+  .then(function askForBuildSettings() {
+
     return self.promptAsync([{
-      name: 'namespace',
-      when: self.whenUndefinedProp('namespace'),
-      message: 'What namespace should we use (2-3 letters)?',
-      validate: function(value) {
-        return /^\w+$/.test(value) ? true : 'Please enter only letters';
-      },
-      default: props.type === 'application' ? 'app' : (props.username ? props.username.toLowerCase().substr(0, 2) : 'my')
+      name: 'htmlPreprocessor',
+      when: self.whenUndefinedProp('htmlPreprocessor'),
+      message: 'Should I set up one of those HTML preprocessors for you?',
+      type: 'list',
+      choices: ['none', 'jade'],
+      default: 0
+    },
+    {
+      name: 'jsPreprocessor',
+      when: self.whenUndefinedProp('jsPreprocessor'),
+      message: 'Should I set up one of those JS preprocessors for you?',
+      type: 'list',
+      choices: ['none', '6to5', 'coffee'],
+      default: 0
+    },
+    {
+      name: 'cssPreprocessor',
+      when: self.whenUndefinedProp('cssPreprocessor'),
+      message: 'Should I set up one of those CSS preprocessors for you?',
+      type: 'list',
+      choices: ['none', 'less', 'sass'],
+      default: 1
+    },
+    {
+      name: 'license',
+      when: self.whenUndefinedProp('license'),
+      message: 'Under which license your project shall be released?',
+      default: 'MIT'
     }]);
 
   })
@@ -145,7 +132,6 @@ module.exports = function () {
     props.pkgName = _.dasherize(props.name).replace(/^-/, '');
     props.className = _.classify(props.name);
     props.moduleName = (props.username ? props.username + '.' : '') + props.className;
-    props.namespace = props.namespace.toLowerCase();
     if(!props.locale) {
       props.locale = 'en';
     }

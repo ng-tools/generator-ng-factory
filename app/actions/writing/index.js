@@ -13,7 +13,9 @@ module.exports = function () {
 
   return Promise.resolve()
   .then(function() {
-    var config = _.pick(props, 'type', 'name', 'namespace', 'username', /*'version', 'description', */ 'ngVersion', 'license', 'htmlPreprocessor', 'jsPreprocessor', 'cssPreprocessor');
+    var config = _.pick(props, 'type', 'name', 'module', 'username', /*'version', 'description', */ 'ngVersion', 'license', 'htmlPreprocessor', 'jsPreprocessor', 'cssPreprocessor');
+    config.module = props.moduleName; // @todo rename
+    if(props.namespace) config.namespace = props.namespace;
     return self.writeAsync('ngfactory.json', JSON.stringify(config, null, 2));
   })
   .then(function() {

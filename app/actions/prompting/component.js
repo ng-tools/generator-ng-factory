@@ -30,9 +30,18 @@ module.exports = function() {
     type: 'list',
     choices: components['angular/angular.js'],
     default: 0
+  }, {
+    name: 'namespace',
+    when: self.whenUndefinedProp('namespace'),
+    message: 'What namespace should your component use (2-3 letters)?',
+    validate: function(value) {
+      return /^\w+$/.test(value) ? true : 'Please enter only letters';
+    },
+    default: props.username ? props.username.toLowerCase().substr(0, 2) : 'my'
   }])
   .then(function() {
 
+    props.namespace = props.namespace.toLowerCase();
     props.componentName = _.classify(props.name.replace('angular-', '').replace('ng-', ''));
     props.description = 'Yet another amazing AngularJS component!';
 
