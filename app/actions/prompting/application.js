@@ -9,15 +9,16 @@ module.exports = function() {
   var props = this.props, argv = this.argv;
 
   var components = props.availableComponents = {
-    'angular/angular.js': ['~1.3.0', '~1.2.0'],
+    'angular/angular.js': ['~1.4.0', '~1.3.0', '~1.2.0'],
     'twbs/bootstrap': ['^3.3'],
-    'fortawesome/font-awesome': ['^4.0'],
-    'mgcrea/angular-strap': ['^2.1'],
+    'fortawesome/font-awesome': ['^4.3'],
+    'mgcrea/angular-strap': ['^2.2'],
     'mgcrea/angular-motion': ['^0.3'],
     'mgcrea/bootstrap-additions': ['^0.2'],
     'angular-translate/angular-translate': ['^2.5'],
     'angular-ui/ui-router': ['^0.2'],
-    'lodash/lodash': ['^2.4'],
+    'lodash/lodash': ['^3.5'],
+    'lsystems/angular-extend-promises': ['^1.0'],
     'automattic/socket.io-client': ['^1.2']
   };
 
@@ -87,7 +88,19 @@ module.exports = function() {
       default: 1
     }]);
 
-  }).then(function() {
+  })
+  .then(function askTemplate() {
+
+    return self.promptAsync([{
+      name: 'baseTemplate',
+      message: 'Which bootstrap template would you like to start from?',
+      type: 'list',
+      choices: ['dashboard', 'cover'],
+      default: 0
+    }]);
+
+  })
+  .then(function() {
 
     props.description = 'Yet another amazing AngularJS app!';
 

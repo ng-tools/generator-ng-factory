@@ -12,22 +12,29 @@ module.exports = function () {
   var props = this.props, argv = this.argv;
 
   return Promise.resolve()
-  .then(function() {
-    var config = _.pick(props, 'type', 'name', 'module', 'username', /*'version', 'description', */ 'ngVersion', 'license', 'htmlPreprocessor', 'jsPreprocessor', 'cssPreprocessor');
+  .then(function writeConfig() {
+    var config = _.pick(props, 'type', 'name', 'module', 'username', /*'version', 'description', */ 'ngVersion', 'ngModules', 'license', 'htmlPreprocessor', 'jsPreprocessor', 'cssPreprocessor');
     config.module = props.moduleName; // @todo rename
     if(props.namespace) config.namespace = props.namespace;
     return self.writeAsync('ngfactory.json', JSON.stringify(config, null, 2));
   })
   .then(function() {
 
-    var files = [
-      'json',
-      ['none', '6to5'].indexOf(props.jsPreprocessor) === -1 ? props.jsPreprocessor : 'js',
-      props.htmlPreprocessor !== 'none' ? props.htmlPreprocessor : 'html',
-      props.cssPreprocessor !== 'none' ? props.cssPreprocessor.replace('sass', 'scss') : 'css'
-    ];
+    var transpileMap = {
+      scripts: {
+        'none': 'js', '6to5': 'es', 'coffee': 'coffee'
+      },
+      styles: {
+        'none': 'css', 'less': 'less', 'sass': 'scss'
+      },
+      views: {
+        'none': 'html', 'jade': 'jade'
+      }
+    };
 
+    var files = Array.prototype.concat.call([], 'json', transpileMap.scripts[props.jsPreprocessor], transpileMap.styles[props.cssPreprocessor], transpileMap.views[props.htmlPreprocessor]);
     return require('./' + props.type).call(self, files);
+
   })
   .then(function() {
 

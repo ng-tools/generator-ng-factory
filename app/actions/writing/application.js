@@ -9,7 +9,8 @@ module.exports = function(files) {
   var props = this.props, argv = this.argv;
 
   // Copy base files
-  var cwd = path.resolve(__dirname, '..', '..', 'templates', 'application');
+  d(props.baseTemplate);
+  var cwd = path.resolve(__dirname, '..', '..', 'templates', 'application', props.baseTemplate);
   return globAsync('app/**/*.{' + files.join(',') + '}', {cwd: cwd}).each(function(filepath) {
     return self.templateAsync(filepath, filepath, {cwd: cwd});
   });

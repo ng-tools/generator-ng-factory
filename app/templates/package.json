@@ -27,7 +27,7 @@
 {%- endif %}
   "dependencies": {},
   "devDependencies": {
-    "gulp": "^3.8.9",
-    "ng-factory": "^0.3"
+    "gulp": "^3.8.11",
+    "ng-factory": "^0.5"
   }
 }
