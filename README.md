@@ -2,12 +2,13 @@
 
 A generator for [AngularJS](https://github.com/angular/angular.js) applications leveraging [ngFactory](https://github.com/ng-tools/ng-factory), the industrialized workflow for AngularJS.
 
+
 ## Getting Started
 
 To install generator-angular-bootstrap from npm, run:
 
 ```bash
-$ npm install -g yo generator-ng-factory
+$ npm i -g yo bower generator-ng-factory
 ```
 
 Finally, initiate the generator:
@@ -16,6 +17,22 @@ Finally, initiate the generator:
 $ yo ng-factory
 ```
 
+Once done, you can either use a global `gulp-cli#4.0` instance:
+
+```bash
+$ npm i -g gulpjs/gulp-cli#4.0
+$ gulp serve
+```
+
+Or the local one that comes bundled in your node_modules:
+
+```bash
+$ node_modules/.bin/gulp serve
+```
+
+In that case, having an alias into your `.bash_aliases` like `alias lgulp="node_modules/.bin/gulp"` can help.
+
+
 ## Communication
 
 - If you **need help**, use [Stack Overflow](http://stackoverflow.com/questions).
@@ -23,6 +40,25 @@ $ yo ng-factory
 - If you **found a bug**, open an issue.
 - If you **have a feature request**, open an issue.
 - If you **want to contribute**, submit a pull request.
+
+
+## Frequently Encountered Errors
+
+```
+/usr/local/lib/node_modules/gulp/bin/gulp.js:129
+    gulpInst.start.apply(gulpInst, toRun);
+                  ^
+TypeError: Cannot read property 'apply' of undefined
+    at /usr/local/lib/node_modules/gulp/bin/gulp.js:129:19
+```
+- You are using a `gulp#3.0` global instance to drive a `gulp#4.0` project, either install a global `gulp-cli#4.0` or use the local gulp.
+
+```
+[00:00:00] Error: Bower components directory does not exist at /home/foo/bar/app/bower_components
+    at Error (native)
+```
+- You need to `bower i` first
+
 
 ## Copyright and license
 
