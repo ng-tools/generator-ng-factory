@@ -1,6 +1,6 @@
 # generator-ng-factory [![Npm Version](https://img.shields.io/npm/v/generator-ng-factory.svg?style=flat)](https://www.npmjs.com/package/generator-ng-factory) [![Project Status](https://img.shields.io/badge/status-beta-blue.svg?style=flat)](https://github.com/ng-tools/generator-ng-factory)
 
-A generator for [AngularJS](https://github.com/angular/angular.js) applications leveraging [ngFactory](https://github.com/ng-tools/ng-factory), the industrialized workflow for AngularJS.
+A generator for [AngularJS](https://github.com/angular/angular.js) applications, components and libraries leveraging [ngFactory](https://github.com/ng-tools/ng-factory), the industrialized workflow for AngularJS.
 
 
 ## Getting Started
