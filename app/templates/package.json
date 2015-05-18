@@ -29,7 +29,11 @@
   "devDependencies": {
     "gulp": "git://github.com/gulpjs/gulp.git#4.0",
     "ng-factory": "^1.0",
-    "undertaker-app-tasks": "^0.2",
-    "factory-angular-channels": "^0.6"
+{%- if props.type == "application" %}
+    "undertaker-app-tasks": "^0.2.6",
+{%- else %}
+    "undertaker-lib-tasks": "^0.3.1",
+{%- endif %}
+    "factory-angular-channels": "^0.7.1"
   }
 }
