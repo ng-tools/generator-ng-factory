@@ -27,6 +27,7 @@ module.exports = function () {
   .then(function() {
 
     // Fetch git config settings
+    // var email = require('git-user-email');
     props.git = {
       name: self.user.git.name(),
       email: self.user.git.email()
@@ -55,7 +56,7 @@ module.exports = function () {
       when: self.whenUndefinedProp('type'),
       message: 'What are you building today?',
       type: 'list',
-      choices: ['application', 'component'],
+      choices: ['application', 'component', 'library'],
       default: 0
     }]).then(function() {
       return self.promptAsync([{
