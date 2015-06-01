@@ -38,11 +38,14 @@ html(lang="{{ props.locale }}", ng-app="{{ props.moduleName }}")
     div(ng-include="'views/partials/navbar.html'")
     .container-fluid
       .row
-        .col-sm-3.col-md-2(ng-include="'views/partials/sidebar.html'")
+        .sidebar.col-sm-3.col-md-2
+          div(ng-include="'views/partials/sidebar.html'")
 {%- if props.ngModules|contains('route') %}
-        .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2(ng-view)
+        .main.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2
+          div(ng-view)
 {%- else %}
-        .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2(ng-include="'views/overview.html")
+        .main.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2
+          div(ng-include="'views/overview.html")
 {%- endif %}
 
     //- bower:js
@@ -56,4 +59,3 @@ html(lang="{{ props.locale }}", ng-app="{{ props.moduleName }}")
 
     //- views:js
     //- endinject
-
