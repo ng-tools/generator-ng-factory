@@ -23,7 +23,7 @@ module.exports = function () {
     var localConfig = JSON.parse(buffer.toString());
     _.extend(props, localConfig);
   })
-  .catch(function(err) {})
+  .catch(function() {})
   .then(function() {
 
     // Fetch git config settings
@@ -108,7 +108,7 @@ module.exports = function () {
       when: self.whenUndefinedProp('jsPreprocessor'),
       message: 'Should I set up one of those JS preprocessors for you?',
       type: 'list',
-      choices: ['none', '6to5', 'coffee'],
+      choices: ['none', 'babel', 'coffee'],
       default: 0
     },
     {

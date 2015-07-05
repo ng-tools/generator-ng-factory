@@ -9,7 +9,7 @@ module.exports = function() {
   var props = this.props, argv = this.argv;
 
   var components = props.availableComponents = {
-    'angular/angular.js': ['~1.3.0', '~1.2.0'],
+    'angular/angular.js': ['~1.4.0', '~1.3.0', '~1.2.0'],
   };
 
   // Handle command-line args
@@ -48,5 +48,3 @@ module.exports = function() {
   });
 
 };
-
-

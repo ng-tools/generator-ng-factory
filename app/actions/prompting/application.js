@@ -13,8 +13,8 @@ module.exports = function() {
     'twbs/bootstrap': ['^3.3'],
     'fortawesome/font-awesome': ['^4.3'],
     'mgcrea/angular-strap': ['^2.2'],
-    'mgcrea/angular-motion': ['^0.3'],
-    'mgcrea/bootstrap-additions': ['^0.2'],
+    'mgcrea/angular-motion': ['^0.4'],
+    'mgcrea/bootstrap-additions': ['^0.3'],
     'angular-translate/angular-translate': ['^2.5'],
     'angular-ui/ui-router': ['^0.2'],
     'lodash/lodash': ['^3.5'],
@@ -107,5 +107,3 @@ module.exports = function() {
   });
 
 };
-
-
