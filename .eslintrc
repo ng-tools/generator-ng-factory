@@ -4,7 +4,7 @@
     "node": true
   },
   "rules": {
-    "strict": 1,
+    "strict": [2, "global"],
     "eqeqeq": 2,
     "curly": [2, "multi-line"],
     "quotes": [2, "single"],

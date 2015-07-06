@@ -22,7 +22,7 @@ module.exports = function () {
 
     var transpileMap = {
       scripts: {
-        'none': 'js', '6to5': 'es', 'coffee': 'coffee'
+        'none': 'js', 'babel': 'es', 'typescript': 'ts', 'coffee': 'coffee'
       },
       styles: {
         'none': 'css', 'less': 'less', 'sass': 'scss'
