@@ -48,7 +48,7 @@ module.exports = function() {
     when: self.whenUndefinedProp('ngModules'),
     message: 'Which official angular modules would you need?',
     type: 'checkbox',
-    choices: [{name: 'animate', checked: true}, 'cookies', 'i18n', 'resource', {name: 'route', checked: true}, 'sanitize', 'touch']
+    choices: [{name: 'animate', checked: true}, 'cookies', 'i18n', 'resource', 'messages', {name: 'route', checked: true}, 'sanitize', 'touch']
   }, {
     name: 'locale',
     message: 'Should I preload a specific i18n-locale file?',
