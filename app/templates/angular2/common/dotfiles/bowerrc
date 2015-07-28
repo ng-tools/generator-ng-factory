@@ -1,0 +1,7 @@
+{
+{%- if props.ngf.type == "application" %}
+  "directory": "app/bower_components"
+{%- else %}
+  "directory": "bower_components"
+{%- endif %}
+}

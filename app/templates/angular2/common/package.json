@@ -1,13 +1,13 @@
 {
-  "name": "{{ props.pkgName }}",
-  "version": "{{ props.version }}",
-  "description": "{{ props.description }}",
+  "name": "{{ props.pkg.name }}",
+  "version": "{{ props.pkg.version }}",
+  "description": "{{ props.pkg.description }}",
   "keywords": [
     "angular"
   ],
-{%- if props.username %}
-  "homepage": "https://github.com/{{ props.username }}/{{ props.pkgName }}",
-  "bugs": "https://github.com/{{ props.username }}/{{ props.pkgName }}/issues",
+{%- if props.ngf.username %}
+  "homepage": "https://github.com/{{ props.username }}/{{ props.pkg.name }}",
+  "bugs": "https://github.com/{{ props.username }}/{{ props.pkg.name }}/issues",
   "author": {
     "name": "{{ props.git.name }}",
     "email": "{{ props.git.email }}",
@@ -15,11 +15,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/{{ props.username }}/{{ props.pkgName }}.git"
+    "url": "https://github.com/{{ props.username }}/{{ props.pkg.name }}.git"
   },
 {%- endif %}
-{%- if props.license %}
-  "license": "{{ props.license }}",
+{%- if props.pkg.license %}
+  "license": "{{ props.pkg.license }}",
 {%- endif %}
   "dependencies": {},
   "devDependencies": {

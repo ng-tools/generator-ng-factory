@@ -5,25 +5,39 @@ var yosay = require('yosay');
 var chalk = require('chalk');
 var _ = require('lodash');
 var Promise = require('bluebird');
+var tildify = require('tildify');
+var util = require('util');
 var fs = Promise.promisifyAll(require('fs'));
 
 module.exports = function () {
   var self = this, done = this.async();
-  var props = this.props, argv = this.argv;
+  var argv = this.argv;
 
-  // var promise = debug ? Promise.resolve(JSON.parse('{"git":{"name":"Olivier Louvignes","email":"olivier@mg-crea.com"},"type":"application","name":"test","ngVersion":"~1.3.0","ngModules":["animate","route"],"components":["twbs/bootstrap"],"htmlPreprocessor":"jade","jsPreprocessor":"none","cssPreprocessor":"less","supportLegacy":"no","license":"MIT","user":"mgcrea"}')).then(function(_props) { _.extend(props, _props); }) :
+  // All answers will be combined in this object
+  var props = this.props = {
+    pkg: {}, // package.json
+    ngf: {}, // ngfactory.json
+    opt: {}  // cli options
+  };
 
   // Have Yeoman greet the user
   self.log(yosay(chalk.yellow.bold('Welcome to ngFactory, ladies and gentlemen!')));
   clearInterval(this.spinner);
 
-  return fs.readFileAsync(path.resolve(process.env.PWD, 'ngfactory.json'))
-  .then(function(buffer) {
-    self.log(chalk.cyan('info') + ' Loading ngfactory.json from cwd');
-    var localConfig = JSON.parse(buffer.toString());
-    _.extend(props, localConfig);
+  // Load any existing files
+  return Promise.all([
+    loadJSONAsync('package.json', {cwd: self.cwd}),
+    loadJSONAsync('ngfactory.json', {cwd: self.cwd})
+  ]).spread(function(pkg, ngf) {
+    if(pkg) {
+      self.log('Using package config from %s', chalk.magenta(tildifyCwd('package.json', {cwd: self.cwd})));
+      _.extend(props.pkg, _.pick(pkg, 'name', 'description', 'version', 'license'));
+    }
+    if(ngf) {
+      self.log('Using factory config from %s', chalk.magenta(tildifyCwd('ngfactory.json', {cwd: self.cwd})));
+      _.extend(props.ngf, ngf);
+    }
   })
-  .catch(function() {})
   .then(function() {
 
     // Fetch git config settings
@@ -34,44 +48,51 @@ module.exports = function () {
     };
 
     // Handle command-line args
-    var basename = path.basename(process.env.PWD);
-    if(argv.app || argv.application) {
-      props.type = 'application';
-    }
-    if(argv.cmp || argv.component) {
-      props.type = 'component';
-    }
-    if(argv.y || argv.yes) {
+    if(argv.yes) {
       _.defaults(props, {
-        name: basename,
-        htmlPreprocessor: 'jade',
-        jsPreprocessor: 'none',
-        cssPreprocessor: 'less',
+        type: 'application',
+        username: 'mgcrea',
+        name: _.kebabCase(self.basename),
         license: 'MIT'
       });
     }
+    if(argv.type) {
+      props.ngf.type = argv.type;
+    } if(argv.application) {
+      props.ngf.type = 'application';
+    } else if(argv.component) {
+      props.ngf.type = 'component';
+    }
 
     return self.promptAsync([{
-      name: 'type',
-      when: self.whenUndefinedProp('type'),
+      name: 'ngf.type',
+      whenUndefined: true,
       message: 'What are you building today?',
       type: 'list',
       choices: ['application', 'component', 'library'],
       default: 0
     }]).then(function() {
       return self.promptAsync([{
-        name: 'name',
-        when: self.whenUndefinedProp('name'),
-        message: 'What\'s the package name of your ' + props.type + '?',
-        default: basename
+        name: 'pkg.name',
+        whenUndefined: true,
+        message: 'What\'s the package name of your ' + props.ngf.type + '?',
+        validate: function(value) {
+          var expected = _.kebabCase(value);
+          return value === expected ? true : util.format('Please enter a valid package name (eg. %s)', expected);
+        },
+        default: _.kebabCase(self.basename)
       }]);
     });
 
   })
   .then(function fetchGithubInfo() {
 
-    if(argv.username) return argv.username;
-    if(props.git.email) return require('./../../modules/github').email(props.git.email);
+    if(argv.u || argv.username) {
+      return (argv.u || argv.username);
+    }
+    if(props.git.email) {
+      return require('./../../modules/github').email(props.git.email);
+    }
 
   })
   .then(function askForExtraInformation(username) {
@@ -81,47 +102,83 @@ module.exports = function () {
     }
 
     return self.promptAsync([{
-      name: 'username',
-      when: self.whenUndefinedProp('username'),
+      name: 'ngf.username',
+      whenUndefined: true,
       message: 'Would you mind telling me your username on GitHub?',
       default: username
     }]);
 
   })
+  .then(function askAngularBranch() {
+
+    return self.promptAsync([{
+      name: 'ngf.branch',
+      whenUndefined: true,
+      message: 'What branch of angular would you like to use?',
+      type: 'list',
+      choices: ['~2.0.0', '~1.4.0', '~1.3.0', '~1.2.0'],
+      default: 0
+    }]).tap(function() {
+      props.opt.angular2 = /^\~2/.test(props.ngf.branch);
+    });
+
+  })
   .then(function() {
 
-    return require('./' + props.type).call(self);
+    return require('./' + props.ngf.type).call(self);
+
+  })
+  .then(function askForModuleName() {
+
+    if (props.opt.angular2) {
+
+      return self.promptAsync([{
+        name: 'ngf.module',
+        whenUndefined: true,
+        message: 'What\'s the main component name of your ' + props.ngf.type + '?',
+        default: _.capitalize(_.camelcase(props.pkg.name)) + 'Component'
+      }]);
+
+    } else {
+
+      return self.promptAsync([{
+        name: 'ngf.module',
+        whenUndefined: true,
+        message: 'What\'s the base module name of your ' + props.ngf.type + '?',
+        default: props.ngf.username + '.' + _.capitalize(_.camelcase(props.pkg.name))
+      }]);
+
+    }
 
   })
   .then(function askForBuildSettings() {
-
     return self.promptAsync([{
-      name: 'htmlPreprocessor',
-      when: self.whenUndefinedProp('htmlPreprocessor'),
-      message: 'Should I set up one of those HTML preprocessors for you?',
+      name: 'ngf.transpilers.views',
+      whenUndefined: true,
+      message: 'Should I set up one of those views preprocessors for you?',
       type: 'list',
       choices: ['none', 'jade'],
-      default: 0
+      default: 1
     },
     {
-      name: 'jsPreprocessor',
-      when: self.whenUndefinedProp('jsPreprocessor'),
-      message: 'Should I set up one of those JS preprocessors for you?',
+      name: 'ngf.transpilers.scripts',
+      whenUndefined: true,
+      message: 'Should I set up one of those scripts transpilers for you?',
       type: 'list',
-      choices: ['none', 'babel', 'coffee'],
-      default: 0
+      choices: ['none', 'babel', 'typescript', 'coffee'],
+      default: 1
     },
     {
-      name: 'cssPreprocessor',
-      when: self.whenUndefinedProp('cssPreprocessor'),
-      message: 'Should I set up one of those CSS preprocessors for you?',
+      name: 'ngf.transpilers.styles',
+      whenUndefined: true,
+      message: 'Should I set up one of those styles transpilers for you?',
       type: 'list',
       choices: ['none', 'less', 'sass'],
       default: 1
     },
     {
-      name: 'license',
-      when: self.whenUndefinedProp('license'),
+      name: 'pkg.license',
+      whenUndefined: true,
       message: 'Under which license your project shall be released?',
       default: 'MIT'
     }]);
@@ -129,12 +186,9 @@ module.exports = function () {
   })
   .then(function prepareViewProps() {
 
-    props.version = '0.1.0';
-    props.pkgName = _.dasherize(props.name).replace(/^-/, '');
-    props.className = _.classify(props.name);
-    props.moduleName = (props.username ? props.username + '.' : '') + props.className;
-    if(!props.locale) {
-      props.locale = 'en';
+    props.pkg.version = '0.1.0';
+    if(!props.ngf.locale) {
+      props.ngf.locale = 'en';
     }
 
   })
@@ -145,3 +199,21 @@ module.exports = function () {
   });
 
 };
+
+// Helpers
+
+function resolveCwd(file, options) {
+  options = options || {cwd: '.'};
+  return path.resolve(options.cwd, file);
+}
+
+function tildifyCwd(file, options) {
+  return tildify(resolveCwd(file, options));
+}
+
+function loadJSONAsync(file, options) {
+  options = options || {cwd: '.'};
+  return fs.readFileAsync(resolveCwd(file)).then(JSON.parse).catch(function() {
+    return false;
+  });
+}

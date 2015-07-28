@@ -3,13 +3,14 @@
 var path = require('path');
 var semver = require('semver');
 var _ = require('lodash');
+var Promise = require('bluebird');
 
 module.exports = function() {
   var self = this;
   var props = this.props, argv = this.argv;
 
-  var components = props.availableComponents = {
-    'angular/angular.js': ['~1.4.0', '~1.3.0', '~1.2.0'],
+  var components = props.opt.availableComponents = {
+    'angular/angular.js': ['~2.0.0', '~1.4.0', '~1.3.0', '~1.2.0'],
     'twbs/bootstrap': ['^3.3'],
     'fortawesome/font-awesome': ['^4.3'],
     'mgcrea/angular-strap': ['^2.2'],
@@ -22,43 +23,55 @@ module.exports = function() {
     'automattic/socket.io-client': ['^1.2']
   };
 
-  // Handle command-line args
+  // Handle command-line args --yes
   var basename = path.basename(process.env.PWD);
   if(argv.y || argv.yes) {
-    _.defaults(props, {
-      ngVersion: components['angular/angular.js'][0],
-      ngModules: ['animate', 'route'],
-      components: ['twbs/bootstrap'],
-      supportLegacy: 'no'
+    _.defaults(props.opt, {
+      components: ['twbs/bootstrap']
+    });
+    _.defaults(props.ngf, {
+      branch: components['angular/angular.js'][0],
+      legacy: false
     });
   }
 
-  return self.promptAsync([{
-    name: 'ngVersion',
-    when: self.whenUndefinedProp('ngVersion'),
-    message: 'What version of angular would you like to use?',
-    validate: function(value) {
-      return semver.validRange(value) ? true : 'Please enter a valid semantic version (semver.org)';
-    },
-    type: 'list',
-    choices: components['angular/angular.js'],
-    default: 0
-  }, {
-    name: 'ngModules',
-    when: self.whenUndefinedProp('ngModules'),
-    message: 'Which official angular modules would you need?',
-    type: 'checkbox',
-    choices: [{name: 'animate', checked: true}, 'cookies', 'i18n', 'resource', 'messages', {name: 'route', checked: true}, 'sanitize', 'touch']
-  }, {
-    name: 'locale',
-    message: 'Should I preload a specific i18n-locale file?',
-    type: 'list',
-    choices: ['en', 'de', 'es', 'fr'],
-    when: function(props) {
-      return props.ngModules && props.ngModules.indexOf('i18n') !== -1;
-    },
-    default: 0
-  }])
+  return Promise.bind({})
+  .then(function askForCoreModules() {
+
+    if (props.opt.angular2) {
+
+      // Angular ^2.0
+      return self.promptAsync([{
+        name: 'ngf.modules',
+        whenUndefined: true,
+        message: 'Which official angular modules would you need?',
+        type: 'checkbox',
+        choices: [{name: 'router', checked: true}, 'forms', 'http']
+      }]);
+
+    } else {
+
+      // Angular ^1.2
+      return self.promptAsync([{
+        name: 'ngf.modules',
+        whenUndefined: true,
+        message: 'Which official angular modules would you need?',
+        type: 'checkbox',
+        choices: [{name: 'animate', checked: true}, 'cookies', 'i18n', 'resource', 'messages', {name: 'route', checked: true}, 'sanitize', 'touch']
+      }, {
+        name: 'ngf.locale',
+        message: 'Should I preload a specific i18n-locale file?',
+        type: 'list',
+        choices: ['en', 'de', 'es', 'fr'],
+        when: function(lprops) {
+          return lprops.modules && lprops.modules.indexOf('i18n') !== -1;
+        },
+        default: 0
+      }]);
+
+    }
+
+  })
   .then(function askForThirdPartyComponents() {
 
     var choices = Object.keys(components)
@@ -67,8 +80,8 @@ module.exports = function() {
     choices[0].checked = true;
 
     return self.promptAsync([{
-      name: 'components',
-      when: self.whenUndefinedProp('components'),
+      name: 'opt.components',
+      whenUndefined: true,
       message: 'Any third-party component you might require?',
       type: 'checkbox',
       choices: choices
@@ -78,13 +91,11 @@ module.exports = function() {
   .then(function askForCompatibility() {
 
     return self.promptAsync([{
-      name: 'supportLegacy',
-      message: 'Would you want me to support old versions of Internet Explorer (eg. before IE9)?',
+      name: 'opt.legacy',
+      whenUndefined: true,
+      message: 'Would you want me to try to support old versions of Internet Explorer (eg. before IE9)?',
       type: 'list',
       choices: ['yes', 'no'],
-      when: function() {
-        return !props.supportLegacy;
-      },
       default: 1
     }]);
 
@@ -92,7 +103,8 @@ module.exports = function() {
   .then(function askTemplate() {
 
     return self.promptAsync([{
-      name: 'baseTemplate',
+      name: 'opt.template',
+      whenUndefined: true,
       message: 'Which bootstrap template would you like to start from?',
       type: 'list',
       choices: ['dashboard', 'cover'],
@@ -102,7 +114,9 @@ module.exports = function() {
   })
   .then(function() {
 
-    props.description = 'Yet another amazing AngularJS app!';
+    if(_.isUndefined(props.pkg.description)) {
+      props.pkg.description = 'Yet another amazing AngularJS app!';
+    }
 
   });
 

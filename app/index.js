@@ -1,19 +1,27 @@
 'use strict';
 
 require('./utils/string');
-var debug = require('./utils/debug');
 var Base = require('./modules/generator');
 var spinner = require('char-spinner');
+var path = require('path');
+// var cwd = require('cwd');
+require('debug-utils');
 
-var GenGenerator = Base.extend({
+module.exports = Base.extend({
 
   initializing: function () {
-    var self = this;
+    this.argv = require('yargs')
+      .alias('app', 'application')
+      .alias('cmp', 'component')
+      .alias('t', 'type')
+      .alias('y', 'yes')
+      .argv;
     this.spinner = spinner();
     this.engine = require('./modules/nunjucks-engine')();
-    this.argv = require('minimist')(process.argv.slice(2));
     this.pkg = require('../package.json');
-    this.props = {};
+    this.cwd = process.env.PWD; // cwd() not working
+    this.basename = path.basename(this.cwd);
+
   },
 
   prompting: require('./actions/prompting'),
@@ -26,8 +34,3 @@ var GenGenerator = Base.extend({
   }
 
 });
-
-module.exports = GenGenerator;
-
-
-

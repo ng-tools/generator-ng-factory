@@ -1,0 +1,13 @@
+{
+  "name": "{{ props.pkg.name }}",
+  "version": "{{ props.pkg.version }}",
+  "dependencies": {
+    {%- if props.opt.components.length == 1 %}
+    "{{ props.opt.components[0]|split("/")|last }}": "{{ props.opt.availableComponents[props.opt.components[0]][0] }}"
+    {%- else %}
+    {%- for component in props.opt.components %}
+    "{{ component|split("/")|last }}": "{{ props.opt.availableComponents[component][0] }}",
+    {%- endfor %}
+    {%- endif %}
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "{{ props.pkg.name }}",
+  "version": "{{ props.pkg.version }}",
+  "description": "{{ props.pkg.description }}",
+  "keywords": [
+    "angular2"
+  ],
+{%- if props.ngf.username %}
+  "homepage": "https://github.com/{{ props.username }}/{{ props.pkg.name }}",
+  "bugs": "https://github.com/{{ props.username }}/{{ props.pkg.name }}/issues",
+  "author": {
+    "name": "{{ props.git.name }}",
+    "email": "{{ props.git.email }}",
+    "url": "https://github.com/{{ props.username }}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/{{ props.username }}/{{ props.pkg.name }}.git"
+  },
+{%- endif %}
+{%- if props.pkg.license %}
+  "license": "{{ props.pkg.license }}",
+{%- endif %}
+  "dependencies": {
+    "angular2": "^2.0.0-alpha.32",
+    "systemjs": "^0.18.4"
+  },
+  "devDependencies": {
+    "gulp": "git://github.com/gulpjs/gulp.git#4.0",
+    "ng-factory": "^1.0",
+{%- if props.type == "application" %}
+    "undertaker-app-tasks": "^0.2.6",
+{%- else %}
+    "undertaker-lib-tasks": "^0.3.1",
+{%- endif %}
+    "factory-angular-channels": "^0.7.1"
+  }
+}

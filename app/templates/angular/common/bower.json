@@ -1,0 +1,13 @@
+{
+  "name": "{{ props.pkg.name }}",
+  "version": "{{ props.pkg.version }}",
+  "dependencies": {
+    {%- for component in props.opt.components %}
+    "{{ component|split("/")|last }}": "{{ props.opt.availableComponents[component][0] }}",
+    {%- endfor %}
+    {%- for module in props.ngf.modules %}
+    "angular-{{ module }}": "{{ props.ngf.branch }}",
+    {%- endfor %}
+    "angular": "{{ props.ngf.branch }}"
+  }
+}

@@ -9,20 +9,20 @@ module.exports = function() {
   var props = this.props, argv = this.argv;
 
   var components = props.availableComponents = {
-    'angular/angular.js': ['~1.4.0', '~1.3.0', '~1.2.0']
+    'angular/angular.js': ['~2.0.0', '~1.4.0', '~1.3.0', '~1.2.0']
   };
 
   // Handle command-line args
   var basename = path.basename(process.env.PWD);
   if(argv.y || argv.yes) {
     _.defaults(props, {
-      ngVersion: components['angular/angular.js'][0]
+      branch: components['angular/angular.js'][0]
     });
   }
 
   return self.promptAsync([{
-    name: 'ngVersion',
-    when: self.whenUndefinedProp('ngVersion'),
+    name: 'branch',
+    when: self.whenUndefinedProp('branch'),
     message: 'What version of angular would your component use?',
     validate: function(value) {
       return semver.validRange(value) ? true : 'Please enter a valid semantic version (semver.org)';

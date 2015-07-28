@@ -9,6 +9,7 @@ var chalk = require('chalk');
 var _ = require('lodash');
 var inquirer = require('inquirer');
 var log = require('./../utils/log');
+var bufferEqual = require('buffer-equal');
 
 var yeoman = require('yeoman-generator');
 var Generator = yeoman.generators.Base;
@@ -18,13 +19,36 @@ var Generator = yeoman.generators.Base;
 //   console.log.apply(console, arguments);
 // };
 
+// Generator.extend = require('class-extend').extend;
+
 Generator.prototype.prompt = inquirer.prompt;
 
 Generator.prototype.promptAsync = function(questions) {
   var self = this;
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve/*, reject*/) {
+    // Support {whenUndefined: true}
+    _.map(questions, function(question) {
+      if(question.whenUndefined) {
+        question.when = whenUndefinedFn(self.props, question.name);
+        delete question.whenUndefined;
+      }
+    });
+    // Actually prompt via inquirer
     self.prompt(questions, function(props) {
-      _.extend(self.props, props);
+      _.each(props, function(value, key) {
+        // Parse boolean-like values
+        if(value === 'yes') {
+          value = true;
+        } else if(value === 'no') {
+          value = false;
+        }
+        // Support dot
+        if(/\./.test(key)) {
+          _.set(self.props, key, value);
+        } else {
+          self.props[key] = value;
+        }
+      });
       resolve(self.props);
     });
   });
@@ -36,18 +60,15 @@ Generator.prototype.queueAsync = function(next) {
   return (queueAsync = queueAsync.then(next));
 };
 
-Generator.prototype.whenUndefinedProp = function(prop) {
-  var self = this;
+function whenUndefinedFn(props, key) {
   return function() {
-    return !self.props[prop];
+    return _.isUndefined(/\./.test(key) ? _.get(props, key) : props[key]);
   };
-};
-
-var bufferEqual = require('buffer-equal');
+}
 
 function readSourceFileAsync(source, options) {
-  if(!options) options = {};
-  return fs.readFileAsync(path.join(options.cwd || (path.join(__dirname, '..', 'templates')), source))
+  options = options || {cwd: '.'};
+  return fs.readFileAsync(path.join(options.cwd, source))
   .catch(function(err) {
     throw err;
   });
@@ -55,7 +76,7 @@ function readSourceFileAsync(source, options) {
 
 function readDestFileAsync(source) {
   return fs.readFileAsync(path.join(process.env.PWD, source))
-  .catch(function(err) {
+  .catch(function(/* err */) {
     return null;
   });
 }
@@ -72,6 +93,16 @@ function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
   /* jshint validthis:true */
   var self = this;
   var argv = this.argv;
+
+  // var colors = {
+  //   skip: 'yellow',
+  //   force: 'yellow',
+  //   create: 'green',
+  //   invoke: 'bold',
+  //   conflict: 'red',
+  //   identical: 'cyan',
+  //   info: 'gray'
+  // };
 
   if(!Buffer.isBuffer(sourceBuffer)) {
     sourceBuffer = new Buffer(sourceBuffer);
@@ -106,7 +137,7 @@ function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
       type: 'expand',
       message: 'Overwrite ' + dest + '?',
       when: function() {
-        return !writeDestFileAsyncForce && !argv.yes && !argv.y;
+        return !writeDestFileAsyncForce && !argv.yes && !argv.y;
       },
       choices: [{
         key: 'y',
@@ -139,7 +170,7 @@ function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
           if(props.action === 'force') {
             writeDestFileAsyncForce = true;
           }
-          if(argv.y || argv.yes || writeDestFileAsyncForce || props.action === 'force' || props.action === 'write') {
+          if(argv.y || argv.yes || writeDestFileAsyncForce || props.action === 'force' || props.action === 'write') {
             return resolve(fs.writeFileAsync(dest, sourceBuffer).then(function() {
               self.log(chalk.yellow('force') + ' ' + dest);
             }).return(props.action));
@@ -155,15 +186,6 @@ function writeDestFileAsync(dest, sourceBuffer, destBuffer, source) {
   }
 }
 
-// var colors = {
-//   skip: 'yellow',
-//   force: 'yellow',
-//   create: 'green',
-//   invoke: 'bold',
-//   conflict: 'red',
-//   identical: 'cyan',
-//   info: 'gray'
-// };
 Generator.prototype.writeAsync = function(dest, buffer) {
   var self = this;
 
@@ -187,8 +209,9 @@ Generator.prototype.copyAsync = function(source, dest, options) {
 
 Generator.prototype.templateAsync = function(source, dest, options) {
   var self = this;
-
-  // log.debug('Processing template "%s"', source);
+  options = options || {
+    cwd: path.join(__dirname, '..', 'templates', (self.props.opt.angular2 ? 'angular2' : 'angular'))
+  };
 
   return readFilePairAsync(source, dest, options)
   .spread(function(sourceBuffer, destBuffer) {
@@ -206,40 +229,3 @@ Generator.prototype.templateAsync = function(source, dest, options) {
 
 module.exports = Generator;
 
-
-// var util = require('util');
-// var path = require('path');
-// var yeoman = require('yeoman-generator');
-// var Promise = require('bluebird');
-// var nunjucksEngine = require('./nunjucks-engine');
-
-// function Generator(args, options, config) {
-//   var self = this;
-
-//   options.engine = nunjucksEngine;
-//   // options['skip-install'] = true;
-//   // options.force = true;
-
-//   yeoman.generators.Base.apply(self, arguments);
-
-//   self.on('end', function() {
-//     self.installDependencies({skipInstall: options['skip-install']});
-//   });
-
-//   self.pkg = JSON.parse(self.readFileAsString(path.join(__dirname, '../../package.json')));
-
-//   var props = self.props = {};
-//   self.promptAsync = function(questions) {
-//     return new Promise(function(resolve, reject) {
-//       self.prompt(questions, function(props) {
-//         self._.extend(self.props, props);
-//         resolve(self.props);
-//       });
-//     });
-//   };
-
-// }
-
-// util.inherits(Generator, yeoman.generators.Base);
-
-// module.exports = Generator;

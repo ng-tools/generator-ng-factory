@@ -14,7 +14,7 @@ module.exports = function() {
     return array.indexOf(val) !== -1;
   });
   env.addFilter('ngModules', function(array) {
-    if(!array || !array.length) return '';
+    if(!array || !array.length) return '';
 
     var modules = _(array)
       .reject('i18n')

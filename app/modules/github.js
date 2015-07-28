@@ -3,7 +3,7 @@
 var Promise = require('bluebird');
 var needle = Promise.promisifyAll(require('needle'));
 var semver = require('semver');
-var oauth = '?client_id=a94e588ae95b43ffc6d6&client_secret=33b3c27b055c548b5077377abf0cd8ad29cdc89d';
+var oauth = '?client_id=a94e588ae95b43ffc6d6&client_secret=f3c4b630065dd0913d6a914bc2226966b1f17690';
 
 exports.tags = function fetchLatestTags(repository, range) {
   return needle.getAsync('https://api.github.com/repos/' + repository + '/tags' + oauth, {compressed: true})
