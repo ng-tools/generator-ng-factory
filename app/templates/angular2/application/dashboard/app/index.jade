@@ -19,6 +19,9 @@ html(lang="en")
     link(rel="shortcut icon", href="favicon.ico", type="image/x-icon")
     //- Author of this application
     link(rel="author" href="https://github.com/mgcrea")
+    base(href="/")
+    //- Hack for angular@2.0.0-alpha.32
+    script baseElement = document.querySelector('base'); baseElement.attr = baseElement.getAttribute;
 
     //- bower:css
     //- endinject
@@ -29,33 +32,21 @@ html(lang="en")
   body
     app
 
-    //- off.bower:js
-    //- off.endinject
-    script(src="bower_components/traceur-runtime/traceur-runtime.min.js")
-    script(src="bower_components/system.js/dist/system.js")
-    script(src="//code.angularjs.org/2.0.0-alpha.31/angular2.dev.js")
-    script(src="//code.angularjs.org/2.0.0-alpha.31/router.dev.js")
+    //- bower:js
+    //- endinject
 
-    //- off.inject:js
-    //- off.endinject
+    //- libs:js
+    //- endinject
+
+    //- angular:js
+    //- endinject
+
+    //- inject:js
+    //- endinject
 
     //- views:js
     //- endinject
 
     script
-      //- | System.defaultJSExtensions = true;
-      | //bootstrap the Angular2 application
-      | System.config({
-      //- |   defaultJSExtensions: true,
-      |   paths: {
-      //- |     "angular2/*": "node_modules/angular2/es6/prod/*.js",
-      |     "rx": "node_modules/angular2/node_modules/rx/dist/rx.js",
-      |     "traceur": "node_modules/angular2/node_modules/traceur/bin/traceur.js"
-      |   },
-      |   meta: {
-      |     'rx': {
-      |       format: 'cjs'
-      |     }
-      |   }
-      | });
-      | System.import('app').catch(console.log.bind(console));
+      | // Bootstrap the Angular2 application
+      | System.import('app.js').catch(console.error.bind(console));
