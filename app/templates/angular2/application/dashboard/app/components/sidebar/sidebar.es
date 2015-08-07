@@ -1,4 +1,4 @@
-import {Directive, Component, View} from 'angular2/angular2';
+import {Component, View} from 'angular2/angular2';
 import {RouterLink} from 'angular2/router';
 import {RouterActiveClass} from 'directives/router-active-class.js';
 

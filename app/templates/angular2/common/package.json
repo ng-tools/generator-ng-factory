@@ -23,7 +23,7 @@
 {%- endif %}
   "dependencies": {
     "angular2": "2.0.0-alpha.34",
-    "systemjs": "^0.18.4"
+    "systemjs": "^0.18.8"
   },
   "devDependencies": {
     "gulp": "git://github.com/gulpjs/gulp.git#4.0",
