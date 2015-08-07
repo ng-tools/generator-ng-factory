@@ -6,13 +6,13 @@ nav.navbar.navbar-inverse.navbar-fixed-top
         span.icon-bar
         span.icon-bar
         span.icon-bar
-      a.navbar-brand(href='/') Dashboard
+      a.navbar-brand(href='/') {{ title }}
       //- ~{{&nbsp;main.version }}{{ main.path() }}
     #navbar.navbar-collapse.collapse
       ul.nav.navbar-nav.navbar-right
-        li: a(href='#') Dashboard
+        li: a([router-link]='["/overview"]') Dashboard
         li: a(href='#') Settings
         li: a(href='#') Profile
         li: a(href='#') Help
       form.navbar-form.navbar-right
-        input.form-control(type='text', placeholder='Search...')
+        input.form-control(type='text', placeholder='Search...', (keyup)='onKeyUp($event, search.value)', #search='')

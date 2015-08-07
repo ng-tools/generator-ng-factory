@@ -6,7 +6,7 @@ import {Component, View} from 'angular2/angular2';
 @View({
   templateUrl: 'components/analytics/analytics.html'
 })
-export class Analytics {
+export class AnalyticsComponent {
   title: string;
   constructor() {
     this.title = 'Analytics';

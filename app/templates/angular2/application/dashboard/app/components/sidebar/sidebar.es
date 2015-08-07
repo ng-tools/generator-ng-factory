@@ -8,9 +8,7 @@ import {RouterLink} from 'angular2/router';
   directives: [RouterLink],
   templateUrl: 'components/sidebar/sidebar.html'
 })
-export class Sidebar {
-  name: string;
+export class SidebarComponent {
   constructor() {
-    this.name = 'Alice';
   }
 }

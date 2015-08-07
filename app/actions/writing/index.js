@@ -20,7 +20,7 @@ module.exports = function () {
 
     d(props);
 
-    var dotfiles = ['.gitignore', '.gitattributes', '.editorconfig', '.jshintrc', '.bowerrc'];
+    var dotfiles = ['.gitignore', '.gitattributes', '.editorconfig', '.eslintrc', '.bowerrc'];
     var pkgfiles = ['gulpfile.js', 'bower.json', 'README.md'];
 
     return Promise.props({

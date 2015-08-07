@@ -13,7 +13,7 @@ module.exports = function() {
     'angular/angular.js': ['~2.0.0', '~1.4.0', '~1.3.0', '~1.2.0'],
     'twbs/bootstrap': ['^3.3'],
     'fortawesome/font-awesome': ['^4.3'],
-    'mgcrea/angular-strap': ['^2.2'],
+    'mgcrea/angular-strap': ['^2.3'],
     'mgcrea/angular-motion': ['^0.4'],
     'mgcrea/bootstrap-additions': ['^0.3'],
     'angular-translate/angular-translate': ['^2.5'],

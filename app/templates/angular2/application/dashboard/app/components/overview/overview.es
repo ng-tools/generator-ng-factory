@@ -1,20 +1,19 @@
 import {Component, View, coreDirectives} from 'angular2/angular2';
+import {ReportsComponent} from '../reports/reports.js';
+import {AnalyticsComponent} from '../analytics/analytics.js';
 
 @Component({
   selector: 'overview'
 })
 @View({
   templateUrl: 'components/overview/overview.html',
-  directives: [coreDirectives]
+  directives: [coreDirectives, ReportsComponent, AnalyticsComponent]
 })
-export class Overview {
-  title: string;
-  // reports: Array<Object>;
+export class OverviewComponent {
   constructor() {
     this.title = 'Dashboard';
-    // this.reports = [{name: 'Aarav'}, {name: 'Martín'}, {name: 'Shannon'}, {name: 'Ariana'}, {name: 'Kai'}];
     setTimeout(() => {
-      this.title = 'Dashboard 2';
+      this.title += ' v2!';
     }, 2000);
   }
 }

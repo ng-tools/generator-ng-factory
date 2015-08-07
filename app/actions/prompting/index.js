@@ -152,6 +152,7 @@ module.exports = function () {
 
   })
   .then(function askForBuildSettings() {
+
     return self.promptAsync([{
       name: 'ngf.transpilers.views',
       whenUndefined: true,
@@ -165,7 +166,7 @@ module.exports = function () {
       whenUndefined: true,
       message: 'Should I set up one of those scripts transpilers for you?',
       type: 'list',
-      choices: ['none', 'babel', 'typescript', 'coffee'],
+      choices: props.opt.angular2 ? ['babel'/*, 'typescript'*/] : ['none', 'babel'/*, 'typescript'*/],
       default: 1
     },
     {
@@ -173,7 +174,7 @@ module.exports = function () {
       whenUndefined: true,
       message: 'Should I set up one of those styles transpilers for you?',
       type: 'list',
-      choices: ['none', 'less', 'sass'],
+      choices: ['none', 'less'/*, 'sass'*/],
       default: 1
     },
     {
