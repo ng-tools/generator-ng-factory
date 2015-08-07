@@ -116,8 +116,8 @@ module.exports = function () {
       whenUndefined: true,
       message: 'What branch of angular would you like to use?',
       type: 'list',
-      choices: ['~2.0.0', '~1.4.0', '~1.3.0', '~1.2.0'],
-      default: 0
+      choices: ['~2.0.0', '~1.4.0', '~1.3.0'],
+      default: 1
     }]).tap(function() {
       props.opt.angular2 = /^\~2/.test(props.ngf.branch);
     });
@@ -126,29 +126,6 @@ module.exports = function () {
   .then(function() {
 
     return require('./' + props.ngf.type).call(self);
-
-  })
-  .then(function askForModuleName() {
-
-    if (props.opt.angular2) {
-
-      return self.promptAsync([{
-        name: 'ngf.module',
-        whenUndefined: true,
-        message: 'What\'s the main component name of your ' + props.ngf.type + '?',
-        default: _.capitalize(_.camelcase(props.pkg.name)) + 'Component'
-      }]);
-
-    } else {
-
-      return self.promptAsync([{
-        name: 'ngf.module',
-        whenUndefined: true,
-        message: 'What\'s the base module name of your ' + props.ngf.type + '?',
-        default: props.ngf.username + '.' + _.capitalize(_.camelcase(props.pkg.name))
-      }]);
-
-    }
 
   })
   .then(function askForBuildSettings() {
@@ -187,8 +164,13 @@ module.exports = function () {
   })
   .then(function prepareViewProps() {
 
-    props.pkg.version = '0.1.0';
-    if(!props.ngf.locale) {
+    if(_.isUndefined(props.pkg.description)) {
+      props.pkg.description = 'Yet another amazing AngularJS ' + props.ngf.type + '!';
+    }
+    if(_.isUndefined(props.pkg.version)) {
+      props.pkg.version = '0.1.0';
+    }
+    if(_.isUndefined(props.ngf.locale)) {
       props.ngf.locale = 'en';
     }
 

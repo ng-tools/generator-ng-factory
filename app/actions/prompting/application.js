@@ -24,7 +24,6 @@ module.exports = function() {
   };
 
   // Handle command-line args --yes
-  var basename = path.basename(process.env.PWD);
   if(argv.y || argv.yes) {
     _.defaults(props.opt, {
       components: ['twbs/bootstrap']
@@ -36,6 +35,29 @@ module.exports = function() {
   }
 
   return Promise.bind({})
+  .then(function askForModuleName() {
+
+    if (props.opt.angular2) {
+
+      return self.promptAsync([{
+        name: 'ngf.module',
+        whenUndefined: true,
+        message: 'What\'s the main component name of your ' + props.ngf.type + '?',
+        default: 'AppComponent'
+      }]);
+
+    } else {
+
+      return self.promptAsync([{
+        name: 'ngf.module',
+        whenUndefined: true,
+        message: 'What\'s the base module name of your ' + props.ngf.type + '?',
+        default: 'AppComponent'
+      }]);
+
+    }
+
+  })
   .then(function askForCoreModules() {
 
     if (props.opt.angular2) {
@@ -110,13 +132,6 @@ module.exports = function() {
       choices: ['dashboard', 'cover'],
       default: 0
     }]);
-
-  })
-  .then(function() {
-
-    if(_.isUndefined(props.pkg.description)) {
-      props.pkg.description = 'Yet another amazing AngularJS app!';
-    }
 
   });
 

@@ -1,49 +1,34 @@
 'use strict';
 
-var path = require('path');
-var semver = require('semver');
 var _ = require('lodash');
 
 module.exports = function() {
   var self = this;
-  var props = this.props, argv = this.argv;
+  var props = this.props;
 
-  var components = props.availableComponents = {
-    'angular/angular.js': ['~2.0.0', '~1.4.0', '~1.3.0', '~1.2.0']
-  };
 
-  // Handle command-line args
-  var basename = path.basename(process.env.PWD);
-  if(argv.y || argv.yes) {
-    _.defaults(props, {
-      branch: components['angular/angular.js'][0]
-    });
-  }
+  return Promise.bind({})
+  .then(function askForModuleName() {
 
-  return self.promptAsync([{
-    name: 'branch',
-    when: self.whenUndefinedProp('branch'),
-    message: 'What version of angular would your component use?',
-    validate: function(value) {
-      return semver.validRange(value) ? true : 'Please enter a valid semantic version (semver.org)';
-    },
-    type: 'list',
-    choices: components['angular/angular.js'],
-    default: 0
-  }, {
-    name: 'namespace',
-    when: self.whenUndefinedProp('namespace'),
-    message: 'What namespace should your component use (2-3 letters)?',
-    validate: function(value) {
-      return /^\w+$/.test(value) ? true : 'Please enter only letters';
-    },
-    default: props.username ? props.username.toLowerCase().substr(0, 2) : 'my'
-  }])
-  .then(function() {
+    if (props.opt.angular2) {
 
-    props.namespace = props.namespace.toLowerCase();
-    props.componentName = _.classify(props.name.replace('angular-', '').replace('ng-', ''));
-    props.description = 'Yet another amazing AngularJS component!';
+      return self.promptAsync([{
+        name: 'ngf.module',
+        whenUndefined: true,
+        message: 'What\'s the base module name of your ' + props.ngf.type + '?',
+        default: props.pkg.name + '/' + _.capitalize(_.camelcase(props.pkg.name)) + 'Component'
+      }]);
+
+    } else {
+
+      return self.promptAsync([{
+        name: 'ngf.module',
+        whenUndefined: true,
+        message: 'What\'s the base module name of your ' + props.ngf.type + '?',
+        default: props.ngf.username + '.' + _.capitalize(_.camelcase(props.pkg.name))
+      }]);
+
+    }
 
   });
 

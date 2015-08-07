@@ -18,8 +18,6 @@ module.exports = function () {
   })
   .then(function writeBaseFiles() {
 
-    d(props);
-
     var dotfiles = ['.gitignore', '.gitattributes', '.editorconfig', '.eslintrc', '.bowerrc'];
     var pkgfiles = ['gulpfile.js', 'bower.json', 'README.md'];
 
@@ -52,10 +50,8 @@ module.exports = function () {
     return require('./' + props.ngf.type).call(self, files);
 
   })
-  .then(function setupProjectFiles(props) {
-
+  .then(function() {
     done();
-
   });
 
 };

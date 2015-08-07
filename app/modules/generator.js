@@ -75,7 +75,8 @@ function readSourceFileAsync(source, options) {
 }
 
 function readDestFileAsync(source) {
-  return fs.readFileAsync(path.join(process.env.PWD, source))
+  var filePath = path.join(process.env.PWD, source);
+  return fs.readFileAsync(filePath)
   .catch(function(/* err */) {
     return null;
   });
@@ -207,19 +208,19 @@ Generator.prototype.copyAsync = function(source, dest, options) {
 
 };
 
-Generator.prototype.templateAsync = function(source, dest, options) {
+Generator.prototype.templateAsync = function(src, dest, options) {
   var self = this;
   options = options || {
     cwd: path.join(__dirname, '..', 'templates', (self.props.opt.angular2 ? 'angular2' : 'angular'))
   };
 
-  return readFilePairAsync(source, dest, options)
-  .spread(function(sourceBuffer, destBuffer) {
-    var template = self.engine(sourceBuffer.toString(), {props: self.props, pkg: self.pkg});
+  return readFilePairAsync(src, dest, options)
+  .spread(function(srcBuffer, destBuffer) {
+    var template = self.engine(srcBuffer.toString(), {props: self.props, pkg: self.pkg});
     return [new Buffer(template), destBuffer];
   })
-  .spread(function(sourceBuffer, destBuffer) {
-    return writeDestFileAsync.call(self, dest, sourceBuffer, destBuffer, source);
+  .spread(function(srcBuffer, destBuffer) {
+    return writeDestFileAsync.call(self, dest, srcBuffer, destBuffer, src);
   }).catch(function(err) {
     log.error(err);
     throw err;
