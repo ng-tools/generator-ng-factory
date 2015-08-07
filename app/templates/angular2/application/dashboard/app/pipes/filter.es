@@ -4,7 +4,7 @@ import {Pipes} from 'angular2/change_detection';
 
 export class FilterPipe implements Pipe {
   supports(array) {
-    Array.isArray(array);
+    return Array.isArray(array);
   }
   onDestroy() {}
   transform(values, args = []) {
@@ -19,7 +19,9 @@ export class FilterPipe implements Pipe {
 // We create a factory since we create an instance for each binding for stateful pipes
 export class FilterFactory implements PipeFactory {
   supports(array): boolean {
-    return Array.isArray(array);
+    return true;
+    // https://github.com/angular/angular/issues/3529
+    // return Array.isArray(array);
   }
   create(ref): Pipe {
     return new FilterPipe();

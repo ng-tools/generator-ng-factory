@@ -1,6 +1,6 @@
 import {Component, View, bootstrap} from 'angular2/angular2';
 
-import {RouteConfig, RouterOutlet, RouterLink, Router, routerInjectables} from 'angular2/router';
+import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
 
 import {OverviewComponent} from './components/overview/overview.js';
 import {AnalyticsComponent} from './components/analytics/analytics.js';
@@ -12,7 +12,7 @@ import {SearchService} from 'services/search.js';
 
 @Component({
   selector: 'app',
-  viewInjector: [SearchService]
+  viewBindings: [SearchService]
 })
 @View({
   directives: [NavbarComponent, SidebarComponent, RouterOutlet, RouterLink],
@@ -25,7 +25,7 @@ import {SearchService} from 'services/search.js';
   {path: '/reports', component: ReportsComponent, as: 'reports'}
 ])
 class AppComponent {
-  constructor(router: Router) {
+  constructor() {
   }
 }
 

@@ -5,7 +5,7 @@ import {SearchService} from 'services/search.js';
 
 @Component({
   selector: 'reports',
-  viewInjector: [ReportService, filterPipe]
+  viewBindings: [ReportService, filterPipe]
 })
 @View({
   templateUrl: 'components/reports/reports.html',
