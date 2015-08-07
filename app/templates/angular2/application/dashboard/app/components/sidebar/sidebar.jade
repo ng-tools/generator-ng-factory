@@ -1,7 +1,7 @@
 ul.nav.nav-sidebar
-  li: a([router-link]="['/overview']") Overview
-  li: a([router-link]="['/analytics']") Analytics
-  li: a([router-link]="['/reports']") Reports
+  li([router-active-class]="active"): a([router-link]="['/overview']") Overview
+  li([router-active-class]="active"): a([router-link]="['/analytics']") Analytics
+  li([router-active-class]="active"): a([router-link]="['/reports']") Reports
   li: a(href="#") Export
 ul.nav.nav-sidebar
   li: a(href="") Nav item
