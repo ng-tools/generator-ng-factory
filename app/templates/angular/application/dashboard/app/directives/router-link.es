@@ -1,15 +1,25 @@
 
-angular.module('AppComponent')
-
-.directive('routerLink', ($route, $rootScope) => ({
-  restrict: 'A',
-  compile: (element, attrs) => {
-    let routes = $rootScope.$eval(attrs.routerLink);
-    for (let route of routes) {
+class RouterLink {
+  constructor($element, $route) {
+    this._$element = $element;
+    for (const route of this._routeParams) {
       if($route.routes[route]) {
-        element[0].setAttribute('href', $route.routes[route].originalPath);
+        this._navigationHref = $route.routes[route].originalPath;
+        this._$element[0].setAttribute('href', this._navigationHref);
         break;
       }
     }
+  }
+}
+
+angular.module('AppComponent')
+
+.directive('routerLink', () => ({
+  restrict: 'A',
+  controller: RouterLink,
+  controllerAs: '$ctrl',
+  bindToController: true,
+  scope: {
+    _routeParams: '=routerLink'
   }
 }));
