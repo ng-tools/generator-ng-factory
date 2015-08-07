@@ -6,24 +6,22 @@
     "angular2"
   ],
 {%- if props.ngf.username %}
-  "homepage": "https://github.com/{{ props.username }}/{{ props.pkg.name }}",
-  "bugs": "https://github.com/{{ props.username }}/{{ props.pkg.name }}/issues",
+  "homepage": "https://github.com/{{ props.ngf.username }}/{{ props.pkg.name }}",
+  "bugs": "https://github.com/{{ props.ngf.username }}/{{ props.pkg.name }}/issues",
   "author": {
     "name": "{{ props.git.name }}",
     "email": "{{ props.git.email }}",
-    "url": "https://github.com/{{ props.username }}"
+    "url": "https://github.com/{{ props.ngf.username }}"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/{{ props.username }}/{{ props.pkg.name }}.git"
+    "url": "https://github.com/{{ props.ngf.username }}/{{ props.pkg.name }}.git"
   },
 {%- endif %}
 {%- if props.pkg.license %}
   "license": "{{ props.pkg.license }}",
 {%- endif %}
   "dependencies": {
-    "angular2": "^2.0.0-alpha.32",
-    "systemjs": "^0.18.4"
   },
   "devDependencies": {
     "gulp": "git://github.com/gulpjs/gulp.git#4.0",

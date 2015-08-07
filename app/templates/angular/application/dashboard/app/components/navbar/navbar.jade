@@ -6,12 +6,12 @@ nav.navbar.navbar-inverse.navbar-fixed-top
         span.icon-bar
         span.icon-bar
         span.icon-bar
-      a.navbar-brand(href='#') {% raw %}Dashboard~{{&nbsp;main.version }}{{ main.path() }}{% endraw %}
+      a.navbar-brand(href='/') {{ navbar.title }}
     #navbar.navbar-collapse.collapse
       ul.nav.navbar-nav.navbar-right
-        li: a(href='#') Dashboard
+        li: a(router-link='["/overview"]') Dashboard
         li: a(href='#') Settings
         li: a(href='#') Profile
         li: a(href='#') Help
       form.navbar-form.navbar-right
-        input.form-control(type='text', placeholder='Search...')
+        input.form-control(type='text', placeholder='Search...', ng-model='navbar.search.value')
