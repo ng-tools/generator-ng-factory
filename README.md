@@ -27,10 +27,14 @@ $ gulp serve
 Or the local one that comes bundled in your node_modules:
 
 ```bash
-$ node_modules/.bin/gulp serve
+$ $(npm bin)/gulp serve
 ```
 
-In that case, having an alias into your `.bash_aliases` like `alias lgulp="node_modules/.bin/gulp"` can help.
+In that case, you can add an alias into your `.bash_aliases` like:
+
+```bash
+function lgulp() { $(npm bin)/gulp $@; }
+```
 
 
 ## Communication
