@@ -1,15 +1,16 @@
-import {Component, View, coreDirectives} from 'angular2/angular2';
+import {Component, View, CORE_DIRECTIVES} from 'angular2/angular2';
 import {ReportService} from './services/report.js';
-import {filterPipe} from 'pipes/filter.js';
+import {FilterPipe} from 'pipes/filter.js';
 import {SearchService} from 'services/search.js';
 
 @Component({
   selector: 'reports',
-  viewBindings: [ReportService, filterPipe]
+  viewBindings: [ReportService]
 })
 @View({
   templateUrl: 'components/reports/reports.html',
-  directives: [coreDirectives]
+  directives: [CORE_DIRECTIVES],
+  pipes: [FilterPipe]
 })
 export class ReportsComponent {
   constructor(Report: ReportService, search: SearchService) {

@@ -20,8 +20,8 @@ export class RouterActiveClass {
     this._activeClass = change && !isNaN(change) ? change : 'active';
   }
   onLocationChange(_navigationHref) {
-    this._navigationHref = this._dependencies.first._navigationHref;
-    const enabled = this._navigationHref.indexOf(this._location.path()) !== -1;
+    this._visibleHref = this._dependencies.first.visibleHref;
+    const enabled = this._visibleHref.indexOf(this._location.path()) !== -1;
     this._renderer.setElementClass(this._ngEl, this._activeClass, enabled);
   }
 }
