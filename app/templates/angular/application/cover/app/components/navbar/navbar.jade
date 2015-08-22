@@ -1,5 +1,8 @@
-nav
-  ul.nav.masthead-nav(bs-nav)
-    li(router-active-class=""): a(router-link="['/']") Home
-    li(router-active-class=""): a(router-link="['/features']") Features
-    li(router-active-class=""): a(router-link="['/contact']") Contact
+.masthead.clearfix
+  .inner
+    h3.masthead-brand {{ navbar.title }}
+    nav
+      ul.nav.masthead-nav(bs-nav)
+        li(router-active-class=""): a(router-link="['/']") Home
+        li(router-active-class=""): a(router-link="['/features']") Features
+        li(router-active-class=""): a(router-link="['/contact']") Contact

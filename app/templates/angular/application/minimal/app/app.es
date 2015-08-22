@@ -1,7 +1,10 @@
 
 class AppComponent {
-  constructor() {
+  constructor($timeout) {
     this.name = 'World';
+    $timeout(() => {
+      this.name += ' v1!';
+    }, 2000);
   }
   static config($locationProvider) {
     $locationProvider.html5Mode(true);

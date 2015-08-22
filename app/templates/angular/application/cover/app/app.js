@@ -1,6 +1,5 @@
 
 function AppComponent() {
-
 }
 
 AppComponent.config = function($locationProvider, $routeProvider) {

@@ -1,7 +1,6 @@
 
 class AppComponent {
   constructor() {
-
   }
   static config($locationProvider, $routeProvider) {
 
