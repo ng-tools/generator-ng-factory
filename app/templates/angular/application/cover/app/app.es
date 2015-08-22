@@ -4,6 +4,9 @@ class AppComponent {
   }
   static config($locationProvider, $routeProvider) {
 
+    // Uncomment in production for a significant performance boost
+    // $compileProvider.debugInfoEnabled(false);
+
     $locationProvider.html5Mode(true);
 
     $routeProvider
