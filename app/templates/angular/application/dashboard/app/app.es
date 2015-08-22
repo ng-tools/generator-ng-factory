@@ -27,7 +27,7 @@ class AppComponent {
 angular.module('AppComponent', [
   'ngAnimate', 'ngRoute',
   'NavbarComponent', 'SidebarModule',
-  'OverviewComponent', 'AnalyticsComponent', 'ReportsModule'
+  'OverviewComponent', 'AnalyticsComponent', 'ReportsComponent'
 ])
 
 .config(AppComponent.config)

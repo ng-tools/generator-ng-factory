@@ -10,14 +10,12 @@ class ReportsComponent {
   }
 }
 
-angular.module('ReportsModule', [])
-
-.controller('ReportsComponent', ReportsComponent)
+angular.module('ReportsComponent', [])
 
 .directive('reports', () => ({
   scope: {},
   controllerAs: 'reports',
-  controller: 'ReportsComponent',
+  controller: ReportsComponent,
   bindToController: true,
   templateUrl: 'components/reports/reports.html'
 }));

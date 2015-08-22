@@ -6,7 +6,7 @@ class NavbarComponent {
   }
 }
 
-angular.module('NavbarComponent', [])
+angular.module('NavbarComponent', ['ngRoute'])
 
 .directive('navbar', () => ({
   scope: {},
