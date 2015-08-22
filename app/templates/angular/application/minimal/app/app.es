@@ -10,6 +10,7 @@ class AppComponent {
     $locationProvider.html5Mode(true);
   }
 }
+AppComponent.config.$inject = ['$locationProvider'];
 
 angular.module('AppComponent', [
   'ngAnimate', 'ngRoute'

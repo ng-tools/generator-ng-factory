@@ -22,6 +22,7 @@ class AppComponent {
 
   }
 }
+AppComponent.config.$inject = ['$locationProvider', '$routeProvider'];
 
 angular.module('AppComponent', [
   'ngAnimate', 'ngRoute',
