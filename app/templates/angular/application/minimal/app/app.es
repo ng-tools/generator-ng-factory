@@ -1,12 +1,10 @@
 
 class AppComponent {
   constructor() {
-
+    this.name = 'World';
   }
   static config($locationProvider) {
-
     $locationProvider.html5Mode(true);
-
   }
 }
 
