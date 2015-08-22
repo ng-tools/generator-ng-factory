@@ -12,6 +12,10 @@ module.exports = function(files) {
   var cwd = path.resolve(__dirname, '..', '..', 'templates', props.opt.angular2 ? 'angular2' : 'angular', 'application', props.opt.template);
 
   return Promise.all([
+    // Copy empty files
+    globAsync('**/empty', {cwd: cwd}).each(function(filepath) {
+      return self.copyAsync(filepath, filepath, {cwd: cwd});
+    }),
     // Copy files
     globAsync('app/**/*.{' + files.join(',') + '}', {cwd: cwd}).each(function(filepath) {
       return self.copyAsync(filepath, filepath, {cwd: cwd});

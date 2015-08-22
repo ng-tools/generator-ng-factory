@@ -46,7 +46,13 @@ module.exports = function () {
       }
     };
 
-    var files = Array.prototype.concat.call([], 'json', transpilersMap.scripts[transpilers.scripts], transpilersMap.styles[transpilers.styles], transpilersMap.views[transpilers.views]);
+    var files = Array.prototype.concat.call([],
+      'json',
+      transpilersMap.scripts[transpilers.scripts],
+      transpilersMap.styles[transpilers.styles],
+      transpilersMap.views[transpilers.views]
+    );
+
     return require('./' + props.ngf.type).call(self, files);
 
   })
