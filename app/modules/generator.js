@@ -25,31 +25,36 @@ Generator.prototype.prompt = inquirer.prompt;
 
 Generator.prototype.promptAsync = function(questions) {
   var self = this;
-  return new Promise(function(resolve/*, reject*/) {
+  return Promise.resolve(questions).each(function(question) {
     // Support {whenUndefined: true}
-    _.map(questions, function(question) {
-      if(question.whenUndefined) {
-        question.when = whenUndefinedFn(self.props, question.name);
-        delete question.whenUndefined;
-      }
+    if(question.whenUndefined) {
+      question.when = whenUndefinedFn(self.props, question.name);
+      delete question.whenUndefined;
+    }
+    // Support async defaults
+    return Promise.resolve(question.default).then(function(value) {
+      question.default = value;
     });
-    // Actually prompt via inquirer
-    self.prompt(questions, function(props) {
-      _.each(props, function(value, key) {
-        // Parse boolean-like values
-        if(value === 'yes') {
-          value = true;
-        } else if(value === 'no') {
-          value = false;
-        }
-        // Support dot
-        if(/\./.test(key)) {
-          _.set(self.props, key, value);
-        } else {
-          self.props[key] = value;
-        }
+  }).then(function(questions) {
+    return new Promise(function(resolve/*, reject*/) {
+      // Actually prompt via inquirer
+      self.prompt(questions, function(props) {
+        _.each(props, function(value, key) {
+          // Parse boolean-like values
+          if(value === 'yes') {
+            value = true;
+          } else if(value === 'no') {
+            value = false;
+          }
+          // Support dot
+          if(/\./.test(key)) {
+            _.set(self.props, key, value);
+          } else {
+            self.props[key] = value;
+          }
+        });
+        resolve(self.props);
       });
-      resolve(self.props);
     });
   });
 };

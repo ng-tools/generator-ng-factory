@@ -29,11 +29,11 @@ module.exports = function () {
     loadJSONAsync('package.json', {cwd: self.cwd}),
     loadJSONAsync('ngfactory.json', {cwd: self.cwd})
   ]).spread(function(pkg, ngf) {
-    if(pkg) {
+    if (pkg) {
       self.log('Using package config from %s', chalk.magenta(tildifyCwd('package.json', {cwd: self.cwd})));
       _.extend(props.pkg, _.pick(pkg, 'name', 'description', 'version', 'license'));
     }
-    if(ngf) {
+    if (ngf) {
       self.log('Using factory config from %s', chalk.magenta(tildifyCwd('ngfactory.json', {cwd: self.cwd})));
       _.extend(props.ngf, ngf);
     }
@@ -48,7 +48,7 @@ module.exports = function () {
     };
 
     // Handle command-line args
-    if(argv.yes) {
+    if (argv.yes) {
       _.defaults(props, {
         type: 'application',
         username: 'mgcrea',
@@ -56,12 +56,15 @@ module.exports = function () {
         license: 'MIT'
       });
     }
-    if(argv.type) {
+    if (argv.type) {
       props.ngf.type = argv.type;
-    } if(argv.application) {
+    } if (argv.application) {
       props.ngf.type = 'application';
-    } else if(argv.component) {
+    } else if (argv.component) {
       props.ngf.type = 'component';
+    }
+    if (argv.username) {
+      props.ngf.username = argv.username;
     }
 
     return self.promptAsync([{
@@ -85,27 +88,13 @@ module.exports = function () {
     });
 
   })
-  .then(function fetchGithubInfo() {
-
-    if(argv.u || argv.username) {
-      return (argv.u || argv.username);
-    }
-    if(props.git.email) {
-      return require('./../../modules/github').email(props.git.email);
-    }
-
-  })
-  .then(function askForExtraInformation(username) {
-
-    if(argv.y || argv.yes) {
-      props.username = username;
-    }
+  .then(function askForGitHubUsername() {
 
     return self.promptAsync([{
       name: 'ngf.username',
       whenUndefined: true,
       message: 'Would you mind telling me your username on GitHub?',
-      default: username
+      default: require('./../../modules/github').email(props.git.email).catch(function(err) {})
     }]);
 
   })
@@ -164,13 +153,13 @@ module.exports = function () {
   })
   .then(function prepareViewProps() {
 
-    if(_.isUndefined(props.pkg.description)) {
+    if (_.isUndefined(props.pkg.description)) {
       props.pkg.description = 'Yet another amazing AngularJS ' + props.ngf.type + '!';
     }
-    if(_.isUndefined(props.pkg.version)) {
+    if (_.isUndefined(props.pkg.version)) {
       props.pkg.version = '0.1.0';
     }
-    if(_.isUndefined(props.ngf.locale)) {
+    if (_.isUndefined(props.ngf.locale)) {
       props.ngf.locale = 'en';
     }
 
