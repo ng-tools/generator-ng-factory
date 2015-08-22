@@ -13,7 +13,7 @@ class RouterActiveClass {
     $rootScope.$on('$routeChangeSuccess', this.render.bind(this));
   }
   render() {
-    if (!this._$route || !this._$route.current) return;
+    if (!this._$route || !this._$route.current || !this._$route.current.$$route) return;
     const enabled = this._$route.current.$$route.regexp.test(this._navigationHref);
     this._$element.toggleClass(this._activeClass || 'active', enabled);
   }
