@@ -4,17 +4,17 @@ var gulp = require('gulp');
 var config = require('ng-factory').use(gulp);
 
 //
-// Aliases
-
-gulp.task('serve', gulp.series('ng:serve'));
-gulp.task('build', gulp.series('ng:build'));
-
-//
-// Hooks example
+// Post build example
 
 // var path = require('path');
-// var src = config.src;
-// gulp.task('ng:afterBuild', function() {
-//   gulp.src(['bower_components/font-awesome/fonts/*.woff'], {cwd: src.cwd})
-//     .pipe(gulp.dest(path.join(src.dest, 'fonts')));
+// var paths = config.paths;
+// gulp.task('afterBuild', function() {
+//   gulp.src('**/*.{webm,mp4,m4v}', {cwd: paths.cwd, base: paths.cwd})
+//     .pipe(paths.dest);
 // });
+
+//
+// Aliases
+
+gulp.task('serve', gulp.series('ng:serve'/*, 'afterBuild'*/));
+gulp.task('build', gulp.series('ng:build'));
