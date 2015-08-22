@@ -1,0 +1,23 @@
+<h2 class="sub-header">Reports</h2>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Foo</th>
+        <th>Bar</th>
+        <th>Baz</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="report in reports.values | filter:reports.search.value">
+        <td>{{ report.id }}</td>
+        <td>{{ report.name }}</td>
+        <td>{{ report.foo }}</td>
+        <td>{{ report.bar }}</td>
+        <td>{{ report.baz }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
