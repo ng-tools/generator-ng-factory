@@ -129,7 +129,7 @@ module.exports = function() {
       whenUndefined: true,
       message: 'Which bootstrap template would you like to start from?',
       type: 'list',
-      choices: ['dashboard', 'cover'],
+      choices: ['dashboard', 'cover', 'minimal'],
       default: 0
     }]);
 
