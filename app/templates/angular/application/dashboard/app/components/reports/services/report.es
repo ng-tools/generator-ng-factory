@@ -1,5 +1,5 @@
 
-angular.module('ReportsModule')
+angular.module('ReportsComponent')
 
 .service('Report', class ReportService {
   constructor() {

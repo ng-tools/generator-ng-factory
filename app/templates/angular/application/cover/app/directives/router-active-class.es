@@ -1,8 +1,8 @@
 
 class RouterActiveClass {
-  constructor($element, $location, $scope, $rootScope) {
+  constructor($element, $scope, $rootScope, $route) {
     this._$element = $element;
-    this._$location = $location;
+    this._$route = $route;
     $scope.$evalAsync(() => {
       this._controllers = [].slice.call(this._$element[0].querySelectorAll('[router-link]'), 0).map((el) => {
         return angular.element(el).controller('routerLink');
@@ -13,7 +13,7 @@ class RouterActiveClass {
     $rootScope.$on('$routeChangeSuccess', this.render.bind(this));
   }
   render() {
-    const enabled = this._navigationHref.indexOf(this._$location.path()) !== -1;
+    const enabled = this._$route.current && this._$route.current.$$route.regexp.test(this._navigationHref);
     this._$element.toggleClass(this._activeClass || 'active', enabled);
   }
 }
