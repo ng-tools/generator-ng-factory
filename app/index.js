@@ -4,8 +4,6 @@ require('./utils/string');
 var Base = require('./modules/generator');
 var spinner = require('char-spinner');
 var path = require('path');
-// var cwd = require('cwd');
-require('debug-utils');
 
 module.exports = Base.extend({
 
