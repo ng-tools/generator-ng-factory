@@ -29,10 +29,10 @@
     "gulp": "git://github.com/gulpjs/gulp.git#4.0",
     "ng-factory": "^1.0",
 {%- if props.ngf.type == "application" %}
-    "undertaker-app-tasks": "^0.2.6",
+    "undertaker-app-tasks": "^0.4.0",
 {%- else %}
-    "undertaker-lib-tasks": "^0.3.1",
+    "undertaker-lib-tasks": "^0.4.0",
 {%- endif %}
-    "factory-angular2-channels": "^0.7.1"
+    "factory-angular2-channels": "^0.8.2"
   }
 }
