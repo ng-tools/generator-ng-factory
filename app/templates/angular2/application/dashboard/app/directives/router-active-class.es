@@ -1,7 +1,7 @@
 import {Query, QueryList, Directive} from 'angular2/angular2';
 import {ElementRef} from 'angular2/core';
 import {Router, RouterLink, Location} from 'angular2/router';
-import {Renderer} from 'angular2/src/render/api';
+import {Renderer} from 'angular2/render';
 
 @Directive({
   selector: '[router-active-class]',

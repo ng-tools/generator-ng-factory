@@ -22,7 +22,7 @@
   "license": "{{ props.pkg.license }}",
 {%- endif %}
   "dependencies": {
-    "angular2": "2.0.0-alpha.36",
+    "angular2": "2.0.0-alpha.37",
     "systemjs": "^0.18.17"
   },
   "devDependencies": {
