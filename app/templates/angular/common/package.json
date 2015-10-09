@@ -21,16 +21,25 @@
 {%- if props.pkg.license %}
   "license": "{{ props.pkg.license }}",
 {%- endif %}
+  "scripts": {
+    "test": "$(npm bin)/eslint --ignore-pattern app/bower_components app",
+    "start": "$(npm bin)/gulp serve",
+    "build": "$(npm bin)/gulp build",
+    "postinstall": "bower install"
+  },
   "dependencies": {
   },
   "devDependencies": {
+    "babel-eslint": "^4.1.3",
+    "eslint": "^1.6.0",
+    "eslint-config-airbnb": "^0.1.0",
+    "factory-angular-channels": "^0.8.3",
     "gulp": "git://github.com/gulpjs/gulp.git#4.0",
     "ng-factory": "^1.0",
 {%- if props.ngf.type == "application" %}
-    "undertaker-app-tasks": "^0.4.0",
+    "undertaker-app-tasks": "^0.4.0"
 {%- else %}
-    "undertaker-lib-tasks": "^0.4.0",
+    "undertaker-lib-tasks": "^0.4.0"
 {%- endif %}
-    "factory-angular-channels": "^0.8.3"
   }
 }
