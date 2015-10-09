@@ -1,7 +1,6 @@
 'use strict';
 
 var path = require('path');
-var yosay = require('yosay');
 var chalk = require('chalk');
 var _ = require('lodash');
 var Promise = require('bluebird');
@@ -20,15 +19,15 @@ module.exports = function () {
     opt: {}  // cli options
   };
 
-  // Have Yeoman greet the user
-  self.log(yosay(chalk.yellow.bold('Welcome to ngFactory, ladies and gentlemen!')));
+
   clearInterval(this.spinner);
 
   // Load any existing files
   return Promise.all([
     loadJSONAsync('package.json', {cwd: self.cwd}),
     loadJSONAsync('ngfactory.json', {cwd: self.cwd})
-  ]).spread(function(pkg, ngf) {
+  ])
+  .spread(function(pkg, ngf) {
     if (pkg) {
       self.log('Using package config from %s', chalk.magenta(tildifyCwd('package.json', {cwd: self.cwd})));
       _.extend(props.pkg, _.pick(pkg, 'name', 'description', 'version', 'license'));
