@@ -31,15 +31,6 @@
     "systemjs": "^0.18.17"
   },
   "devDependencies": {
-    "gulp": "git://github.com/gulpjs/gulp.git#4.0",
-    "ng-factory": "^1.0",
-{%- if props.ngf.type == "application" %}
-    "undertaker-app-tasks": "^0.4.1",
-{%- else %}
-    "undertaker-lib-tasks": "^0.4.0",
-{%- endif %}
-  }
-  "devDependencies": {
     "babel-eslint": "^4.1.3",
     "eslint": "^1.6.0",
     "eslint-config-airbnb": "^0.1.0",

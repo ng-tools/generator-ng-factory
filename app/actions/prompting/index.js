@@ -19,7 +19,6 @@ module.exports = function () {
     opt: {}  // cli options
   };
 
-
   clearInterval(this.spinner);
 
   // Load any existing files
