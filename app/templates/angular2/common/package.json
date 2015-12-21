@@ -1,46 +1,39 @@
 {
-  "name": "{{ props.pkg.name }}",
-  "version": "{{ props.pkg.version }}",
-  "description": "{{ props.pkg.description }}",
+  "name": "sandbox-dashboard",
+  "version": "0.1.0",
+  "description": "Yet another amazing AngularJS application!",
   "keywords": [
     "angular"
   ],
-{%- if props.ngf.username %}
-  "homepage": "https://github.com/{{ props.ngf.username }}/{{ props.pkg.name }}",
-  "bugs": "https://github.com/{{ props.ngf.username }}/{{ props.pkg.name }}/issues",
+  "homepage": "https://github.com/mgcrea/sandbox-dashboard",
+  "bugs": "https://github.com/mgcrea/sandbox-dashboard/issues",
   "author": {
-    "name": "{{ props.git.name }}",
-    "email": "{{ props.git.email }}",
-    "url": "https://github.com/{{ props.ngf.username }}"
+    "name": "Olivier Louvignes",
+    "email": "olivier@mg-crea.com",
+    "url": "https://github.com/mgcrea"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/{{ props.ngf.username }}/{{ props.pkg.name }}.git"
+    "url": "https://github.com/mgcrea/sandbox-dashboard.git"
   },
-{%- endif %}
-{%- if props.pkg.license %}
-  "license": "{{ props.pkg.license }}",
-{%- endif %}
+  "license": "MIT",
   "scripts": {
     "test": "$(npm bin)/eslint --ignore-pattern app/bower_components app",
     "start": "$(npm bin)/gulp serve",
     "build": "$(npm bin)/gulp build"
   },
   "dependencies": {
-    "angular2": "2.0.0-alpha.37",
-    "systemjs": "^0.18.17"
+    "angular2": "2.0.0-alpha.45",
+    "systemjs": "^0.19.5"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.3",
-    "eslint": "^1.6.0",
+    "eslint": "^1.8.0",
     "eslint-config-airbnb": "^0.1.0",
-    "factory-angular2-channels": "^0.8.5",
-    "gulp": "git://github.com/gulpjs/gulp.git#4.0",
-    "ng-factory": "^1.0",
-{%- if props.ngf.type == "application" %}
-    "undertaker-app-tasks": "^0.4.0"
-{%- else %}
-    "undertaker-lib-tasks": "^0.4.0"
-{%- endif %}
+    "eslint-plugin-babel": "^2.1.1",
+    "factory-angular2-channels": "^0.8.6",
+    "gulp-pre": "^4.0.0-alpha.4",
+    "ng-factory": "^1.1",
+    "undertaker-app-tasks": "^0.5.1"
   }
 }
