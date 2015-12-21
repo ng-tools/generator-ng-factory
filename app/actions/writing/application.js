@@ -3,7 +3,6 @@
 var path = require('path');
 var Promise = require('bluebird');
 var globAsync = Promise.promisify(require('glob'));
-var chalk = require('chalk');
 
 module.exports = function(files) {
   var self = this;
@@ -18,7 +17,8 @@ module.exports = function(files) {
     }),
     // Copy files
     globAsync('app/**/*.{' + files.join(',') + '}', {cwd: cwd}).each(function(filepath) {
-      return self.copyAsync(filepath, filepath, {cwd: cwd});
+      var ext = path.extname(filepath);
+      return self.copyAsync(filepath, ext === '.es' ? filepath.replace(/\.es$/, '.js') : filepath, {cwd: cwd});
     }),
     // Render templates
     globAsync('app/**/*.{' + files.map(function(v) { return v + '.j2'; }).join(',') + '}', {cwd: cwd}).each(function(filepath) {
